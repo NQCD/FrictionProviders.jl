@@ -1,4 +1,3 @@
-using FrictionProvidersLDFA
 using NQCModels: Free, FrictionModels
 using PyCall
 using NQCBase
