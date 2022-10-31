@@ -7,10 +7,10 @@ using Unitful: @u_str, ustrip
 using NQCBase: PeriodicCell, apply_cell_boundaries!
 using NQCModels: NQCModels, FrictionModels, Model
 
-include("LDFAFriction.jl")
+include("ldfa_friction.jl")
 include("cube.jl")
-include("CubeDensity.jl")
-include("SciKitDensity.jl")
+include("cube_density.jl")
+include("scikit_density.jl")
 
 export LDFAFriction
 export CubeDensity
