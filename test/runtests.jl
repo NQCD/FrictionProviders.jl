@@ -2,8 +2,6 @@ using FrictionProvidersLDFA
 using NQCModels: Free, FrictionModels
 using PyCall
 using NQCBase
-using CubeLDFAModel
-#using SciKitLDFAModel
 using Test
 using Unitful
 using Pandas
@@ -15,7 +13,8 @@ aseio = pyimport("ase.io")
 ase_atoms = aseio.read("start.in")
 atoms, R, cell =  NQCBase.convert_from_ase_atoms(ase_atoms)
 
-model = LDFAModel(Free(), "test.cube", atoms, cell; friction_atoms=[1, 2])
+density_model = CubeDensity("test.cube", cell)
+model = LDFAFriction(density_model, atoms; friction_atoms=[1, 2])
 
 @testset "friction!" begin
     F = zeros(6, 6)
@@ -53,10 +52,12 @@ desc = dscr_d.SOAP(
     lmax = 1,
     average="off" 
 )
-model = LDFAModel(Free(), atoms, cell, desc, model_ml; friction_atoms=[55, 56])
+
+density_model = SciKitDensity(desc, model_ml, ase_atoms)
+model = LDFAFriction(density_model, atoms; friction_atoms=[55, 56])
 
 @testset "ScikitModel!" begin
-    F = zeros(56, 56)
+    F = zeros(3*56, 3*56)
     r = @view R[:,1]
     r .= 0
     FrictionModels.friction!(model, F, R)
