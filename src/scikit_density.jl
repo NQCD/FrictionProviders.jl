@@ -3,13 +3,19 @@ This uses a SciKit ML models to attach friction coefficients to existing models 
 provided by Gerrits et al. in PHYSICAL REVIEW B 102, 155130 (2020).
 """
 
-struct SciKitDensity{D,L,A}
+struct SciKitDensity{D,L,A,U}
     "Descriptors used for scikit models"
     descriptors::D
-    "Loaded ML model"
-    loaded_model::L
+    "Sci-Kit ML model"
+    ml_model::L
     "Atoms"
     atoms::A
+    "Units"
+    density_unit::U
+end
+
+function SciKitDensity(descriptors, ml_model, atoms; density_unit=u"Å^-3")
+    SciKitDensity(descriptors, ml_model, atoms, density_unit)
 end
 
 function set_coordinates!(model::SciKitDensity, R)
@@ -20,6 +26,6 @@ function density!(model::SciKitDensity, rho::AbstractVector, R::AbstractMatrix, 
     for i in friction_atoms
         set_coordinates!(model, R)
         r_desc = model.descriptors.create(model.atoms, positions=[i-1], n_jobs=1) #n_threads)
-        rho[i] = model.loaded_model.predict(r_desc)[end]
+        rho[i] = austrip(model.ml_model.predict(r_desc)[end] * model.density_unit)
     end
 end

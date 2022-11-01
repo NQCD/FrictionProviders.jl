@@ -4,6 +4,7 @@ using PyCall: pyimport
 using NQCBase: NQCBase
 using NQCModels: FrictionModels
 using Pandas: read_pickle
+using Unitful: @u_str
 
 # SCI-KIT MODEL
 dscr_d = pyimport("dscribe.descriptors")
@@ -22,7 +23,7 @@ desc = dscr_d.SOAP(
     average="off" 
 )
 
-density_model = SciKitDensity(desc, model_ml, ase_atoms)
+density_model = SciKitDensity(desc, model_ml, ase_atoms; density_unit=u"Å^-3")
 model = LDFAFriction(density_model, atoms; friction_atoms=[55, 56])
 
 @testset "ScikitModel!" begin

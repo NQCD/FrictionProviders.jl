@@ -3,9 +3,6 @@ This uses a cube file to attach friction coefficients to existing models by fitt
 provided by Gerrits et al. in PHYSICAL REVIEW B 102, 155130 (2020).
 """
 
-using UnitfulAtomic: austrip
-using NQCBase: PeriodicCell, apply_cell_boundaries!
-
 struct CubeDensity{T}
     "Cube file reader."
     cube::Cube{T}
