@@ -23,9 +23,10 @@ UnitfulAtomic = "1"
 julia = "1"
 
 [extras]
-PyCall = "438e738f-606a-5dbb-bf0a-cddfbfd45ab0"
 Pandas = "eadc2687-ae89-51f9-a5d9-86b5a6373a9c"
+PyCall = "438e738f-606a-5dbb-bf0a-cddfbfd45ab0"
+SafeTestsets = "1bc83da4-3b8d-516f-aca4-4fe02f6d838f"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [targets]
-test = ["Test", "PyCall", "Pandas"]
+test = ["Pandas", "PyCall", "SafeTestsets", "Test"]

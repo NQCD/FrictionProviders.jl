@@ -18,8 +18,8 @@ jobs:
       - name: Add NQCRegistry
         run: julia -e 'using Pkg; Pkg.Registry.add(RegistrySpec(url="https://github.com/NQCD/NQCRegistry"))'
 
-      - name: Install ase
-        run: pip3 install ase
+      - name: Install python dependencies
+        run: pip3 install ase pandas dscribe
 
       - uses: julia-actions/julia-buildpkg@v1
       - uses: julia-actions/julia-runtest@v1
