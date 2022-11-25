@@ -25,7 +25,14 @@ end
 function density!(model::SciKitDensity, rho::AbstractVector, R::AbstractMatrix, friction_atoms::AbstractVector)
     for i in friction_atoms
         set_coordinates!(model, R)
-        r_desc = model.descriptors.create(model.atoms, positions=[i-1], n_jobs=1) #n_threads)
+        density_atoms = model.atoms.copy()
+        friction_atoms_srtd = sort(friction_atoms, rev=true)
+        for j=1:length(friction_atoms_srtd)
+            density_atoms.pop(i=friction_atoms_srtd[j]-1)
+        end
+        density_atoms.append(model.atoms[i])
+        r_desc = model.descriptors.create(density_atoms, positions=[length(density_atoms)-1], n_jobs=1) #n_threads)
         rho[i] = austrip(model.ml_model.predict(r_desc)[end] * model.density_unit)
     end
 end
+
