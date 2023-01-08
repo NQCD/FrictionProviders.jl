@@ -11,10 +11,13 @@ include("ldfa_friction.jl")
 include("cube.jl")
 include("cube_density.jl")
 include("scikit_density.jl")
+include("scikit_friction.jl")
+include("odf_friction.jl")
 
 export LDFAFriction
 export CubeDensity
 export SciKitDensity
-
+export SciKitFriction
+export ODFriction
 
 end
