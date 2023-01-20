@@ -18,7 +18,7 @@ struct SciKitFriction{D,L,A,S,U,E}
     descriptor_atoms::E
 end
 
-function SciKitFriction(descriptors, ml_model, atoms, scaler; friction_unit=u"ps^-1", descriptor_atoms=[0])
+function SciKitFriction(descriptors, ml_model, atoms, scaler; friction_unit=u"ps^-1", descriptor_atoms=[1])
     SciKitFriction(descriptors, ml_model, atoms, scaler, friction_unit, descriptor_atoms)
 end
 
@@ -27,11 +27,24 @@ function set_coordinates!(model::SciKitFriction, R)
     model.atoms.set_positions(ustrip.(auconvert.(u"Å", R')))
 end
 
-function skfriction!(model::SciKitFriction,f::AbstractMatrix, R::AbstractMatrix, friction_atoms::AbstractVector, )
+function skfriction!(model::SciKitFriction,R::AbstractMatrix, f::AbstractMatrix, friction_atoms::AbstractVector)
 
+    apply_cell_boundaries!(model.atoms.cell, R)
     set_coordinates!(model, R)
-    r_desc = model.descriptors.create(atoms, positions=model.descriptor_atoms.-1, n_jobs=-1) #n_threads)
-    f = austrip(model.ml_model.predict(r_desc) * model.friction_unit)
+
+
+    r_desc = model.descriptors.create(model.atoms, positions=model.descriptor_atoms.-1, n_jobs=-1) #n_threads)
+    r_desc = model.scaler.transform(r_desc)
+    m_out = austrip.(model.ml_model.predict(r_desc) .* model.friction_unit)
+
+
+    if size(m_out)[1] == 1
+        for i=1:size(m_out)[2]
+            f[i,i] = m_out[1,i]
+        end
+    else
+        f = m_out
+    end
 
     f
 end
