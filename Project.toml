@@ -13,7 +13,7 @@ Unitful = "1986cc42-f94f-5a68-af5c-568840ba703d"
 UnitfulAtomic = "a7773ee8-282e-5fa2-be4e-bd808c38a91a"
 
 [compat]
-DataInterpolations = "3"
+DataInterpolations = "3, 4"
 NQCBase = "0.1, 0.2"
 NQCModels = "0.8"
 PyCall = "1"
