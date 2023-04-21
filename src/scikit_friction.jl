@@ -27,35 +27,72 @@ function set_coordinates!(model::SciKitFriction, R)
     model.atoms.set_positions(ustrip.(auconvert.(u"Å", R')))
 end
 
+
+# function spin_singularity(z;z0=13.9,Gamma=0.01)
+#     lorentzian =   (4/π)  * ((Gamma) /  ((z - z0)^2 +(Gamma)^2 ))
+#     lorentzian
+# end
+function F_PearsonVII(x, p_H, p_x0, p_omega, p_sigma)
+    f =  p_H / ((1 + ((2 * (x - p_x0) * sqrt(2^ (1 / p_omega) - 1)) /p_sigma)^ 2)^p_omega)
+end
+
+function monoExp(x, m, t, b, c)
+    f = m * exp(-t * x + c) + b
+end
+
+function fitted_function(z)
+
+    popt1 = [1.00049208,13.74298538,  2.81859272,  0.01748954]
+    popt2 = [ 1.05460886, 13.7397012,   0.64277216,  0.0451869 ]
+    popt3 = [1.31754445e+01, 6.08067956e+00, 2.64380301e-04, 7.89657321e+01]
+
+    zz = 0
+
+    if (z>=13.71) && (z<=13.74)
+
+        zz = F_PearsonVII(z,popt1...)
+
+    elseif (z>13.74) && (z<=14.0)
+
+        zz =  F_PearsonVII(z,popt2...)
+
+    elseif (z>14.0) && (z<=15)
+
+        zz = monoExp(z,popt3...)
+
+    else
+        zz=0
+    end
+
+    return zz * 156.764979 
+end
+
 function skfriction!(model::SciKitFriction,R::AbstractMatrix, f::AbstractMatrix, friction_atoms::AbstractVector)
 
-    apply_cell_boundaries!(model.atoms.cell, R)
+    #apply_cell_boundaries!(model.atoms.cell, R)
     set_coordinates!(model, R)
 
 
     r_desc = model.descriptors.create(model.atoms, positions=model.descriptor_atoms.-1, n_jobs=-1) #n_threads)
     r_desc = model.scaler.transform(r_desc)
-    m_out = austrip.(model.ml_model.predict(r_desc) .* model.friction_unit)
+    m_out = model.ml_model.predict(r_desc) 
+
+
+    # if (model.atoms.positions[1,3])>=13.71
+    #     m_out[3] = fitted_function((model.atoms.positions[1,3]))
+    # end
+
+    m_out = austrip.(m_out.* model.friction_unit)
 
 
     if size(m_out)[1] == 1
         for i=1:size(m_out)[2]
-            f[i,i] = m_out[1,i]
+            f[i,i] = austrip(m_out[1,i] * 1u"u") #Hardcode for H atom mass
         end
     else
         f = m_out
     end
-
+  
     f
 end
-
-"Need to convert atoms to SOAP descriptor"
-
-"Need to load scaling from python? and apply same"
-
-"Load model from python?"
-
-"Predict friction from model"
-
-"Need to figure out if its giving just diagonal or full tensor"
 
