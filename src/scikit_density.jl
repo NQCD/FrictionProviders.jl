@@ -9,30 +9,30 @@ struct SciKitDensity{D,L,A,U,S}
     "Sci-Kit ML model"
     ml_model::L
     "Atoms"
-    atoms::A
+    atoms_ase::A
     "Units"
     density_unit::U
     "scaler"
     scaler::S
 end
 
-function SciKitDensity(descriptors, ml_model, atoms; density_unit=u"Å^-3", scaler=nothing)
-    SciKitDensity(descriptors, ml_model, atoms, density_unit, scaler)
+function SciKitDensity(descriptors, ml_model, atoms_ase; density_unit=u"Å^-3", scaler=nothing)
+    SciKitDensity(descriptors, ml_model, atoms_ase, density_unit, scaler)
 end
 
 function set_coordinates!(model::SciKitDensity, R)
-    model.atoms.set_positions(ustrip.(auconvert.(u"Å", R')))
+    model.atoms_ase.set_positions(ustrip.(auconvert.(u"Å", R')))
 end
 
 function density!(model::SciKitDensity, rho::AbstractVector, R::AbstractMatrix, friction_atoms::AbstractVector)
     for i in friction_atoms
         set_coordinates!(model, R)
-        density_atoms = model.atoms.copy()
+        density_atoms = model.atoms_ase.copy()
         friction_atoms_srtd = sort(friction_atoms, rev=true)
         for j=1:length(friction_atoms_srtd)
             density_atoms.pop(i=friction_atoms_srtd[j]-1)
         end
-        density_atoms.append(model.atoms[i])
+        density_atoms.append(model.atoms_ase[i])
         r_desc = model.descriptors.create(density_atoms, positions=[length(density_atoms)-1], n_jobs=1) #n_threads)
         if model.scaler != nothing
             r_desc = model.scaler.transform(r_desc)
