@@ -19,7 +19,6 @@ function set_coordinates!(model::SchNetODF, R)
     model.atoms_ase.set_positions(ustrip.(auconvert.(u"Å", R')))
 end
 
-friction!(model.calculator, R, model.friction, model.friction_atoms)
 
 function friction!(model::SchNetODF, R::AbstractMatrix, friction::AbstractMatrix, friction_atoms::AbstractVector, cutoff::Int)
     set_coordinates!(model, R)
