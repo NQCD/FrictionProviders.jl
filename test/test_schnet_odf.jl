@@ -17,7 +17,7 @@ model_path = "schnet_model/"
 device = "cpu" # vs 'cuda'
 cutoff= 5.0
 
-ase_atoms = aseio.read()
+ase_atoms = aseio.read(atoms_path)
 atoms, R, cell =  NQCBase.convert_from_ase_atoms(ase_atoms)
 
 model_args = spk_utils.read_from_json("$(model_path)args.json")
@@ -31,7 +31,7 @@ calculator = spk_ft.FrictionCalculator(model=model, device=device, cutoff=cutoff
 schnet_model = SchNetODF(calculator, ase_atoms; friction_unit=u"ps^-1")
 odf_model = ODFriction(schnet_model; friction_atoms=[55, 56])
 
-@testset "ScikitModel!" begin
+@testset "SchNetModel!" begin
     F = zeros(3*56, 3*56)
     r = @view R[:,1]
     r .= 0
