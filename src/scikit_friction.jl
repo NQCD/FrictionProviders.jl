@@ -44,7 +44,7 @@ function fitted_function(z)
 
     popt1 = [1.00049208,13.74298538,  2.81859272,  0.01748954]
     popt2 = [ 1.05460886, 13.7397012,   0.64277216,  0.0451869 ]
-    popt3 = [1.31754445e+01, 6.08067956e+00, 2.64380301e-04, 7.89657321e+01]
+    popt3 = [1.31754445e+01, 6.08067956e+00, 0., 7.89657321e+01]
 
     zz = 0
 
@@ -56,15 +56,27 @@ function fitted_function(z)
 
         zz =  F_PearsonVII(z,popt2...)
 
-    elseif (z>14.0) && (z<=15)
+    else #(z>14.0) 
+        # && (z<=20)
 
         zz = monoExp(z,popt3...)
 
-    else
-        zz=0
+    # else
+    #     zz=0
     end
 
     return zz * 156.764979 
+end
+
+
+function find_min_xy_dist(atoms,idx1,idx2)
+
+    new_atoms = atoms
+    new_atoms.positions[:,3] .= 0.
+
+    distances = new_atoms.get_distances(idx1.-1,idx2.-1, mic=true)
+
+    minimum(distances)
 end
 
 function skfriction!(model::SciKitFriction,R::AbstractMatrix, f::AbstractMatrix, friction_atoms::AbstractVector)
@@ -78,6 +90,27 @@ function skfriction!(model::SciKitFriction,R::AbstractMatrix, f::AbstractMatrix,
     m_out = model.ml_model.predict(r_desc) 
 
 
+
+    # ODF-S1 model3
+
+    # Find minimum xy distance to Pt atom
+    idx1 = [1]
+    idx2 = [22,23,24,25]
+    dist_to_top = find_min_xy_dist(model.atoms, idx1, idx2)
+    offset = (1.6163596822847763-dist_to_top)*0.125
+
+    # Evaluate spin peak fit shifted due to proximity to top site
+    if (model.atoms.positions[1,3])>=(13.71)
+        fit = fitted_function((model.atoms.positions[1,3]+offset))
+        if fit>1.
+            m_out[3] = fit
+        elseif (model.atoms.positions[1,3])>=(13.93)
+            m_out[3] = fit 
+        end
+    end 
+
+
+    # ODF-S1 model2
     # if (model.atoms.positions[1,3])>=13.71
     #     m_out[3] = fitted_function((model.atoms.positions[1,3]))
     # end
