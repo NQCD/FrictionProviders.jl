@@ -17,9 +17,9 @@ atoms, R, cell =  NQCBase.convert_from_ase_atoms(ase_atoms)
 desc = dscr_d.SOAP(
     species = ["Cu", "H"],
     periodic = true,
-    rcut = 2.5,
-    nmax = 1,
-    lmax = 1,
+    r_cut = 2.5,
+    n_max = 1,
+    l_max = 1,
     average="off" 
 )
 
