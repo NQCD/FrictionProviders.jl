@@ -33,7 +33,7 @@ function density!(model::SciKitDensity, rho::AbstractVector, R::AbstractMatrix, 
             density_atoms.pop(i=friction_atoms_srtd[j]-1)
         end
         density_atoms.append(model.atoms_ase[i])
-        r_desc = model.descriptors.create(density_atoms, positions=[length(density_atoms)-1], n_jobs=1) #n_threads)
+        r_desc = model.descriptors.create(density_atoms, centers=[length(density_atoms)-1], n_jobs=1) #n_threads)
         if model.scaler != nothing
             r_desc = model.scaler.transform(r_desc)
         end
