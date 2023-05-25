@@ -1,4 +1,4 @@
-module FrictionProvidersLDFA
+module FrictionProviders
 
 using DataInterpolations: CubicSpline
 using DelimitedFiles: readdlm
