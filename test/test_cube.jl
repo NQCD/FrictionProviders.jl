@@ -1,4 +1,4 @@
-using FrictionProvidersLDFA
+using FrictionProviders
 using Test
 using NQCBase
 using PyCall
@@ -13,7 +13,7 @@ cube = pyimport("cube")
 
 filename = "test.cube"
 
-c = FrictionProvidersLDFA.Cube(filename)
+c = FrictionProviders.Cube(filename)
 cube_object = cube.cube()
 cube_object.read(filename)
 

@@ -1,4 +1,4 @@
-name = "FrictionProvidersLDFA"
+name = "FrictionProviders"
 uuid = "0e168e98-d76b-4d03-b07e-2b13986b2fd0"
 authors = ["wgst <wch.stark@gmail.com> and contributors"]
 version = "0.1.1"

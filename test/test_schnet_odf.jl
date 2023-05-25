@@ -1,5 +1,5 @@
 using Test
-using FrictionProvidersLDFA
+using FrictionProviders
 using PyCall: pyimport
 using NQCBase: NQCBase
 using NQCModels: FrictionModels
