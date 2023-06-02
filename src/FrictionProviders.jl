@@ -19,5 +19,6 @@ export CubeDensity
 export SciKitDensity
 export ODFriction
 export SchNetODF
+export ACEdsODF
 
 end
