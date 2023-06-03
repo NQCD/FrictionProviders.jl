@@ -14,13 +14,9 @@ using JLD2
 
 aseio = pyimport("ase.io")
 
-# ACEds MODEL
-
-
 ## LOAD INITIAL ATOMS
 atoms_path = "h2cu_start.in"
 model_path = "aceds_model/"
-device = "cpu" # vs 'cuda'
 
 ase_atoms = aseio.read(atoms_path)
 ase_jl = ASE.ASEAtoms(ase_atoms)
@@ -30,33 +26,24 @@ atoms, R, cell =  NQCBase.convert_from_ase_atoms(ase_atoms)
 
 ### LOAD ACEds MODEL
 
-model_params = load_object("aceds_model/h2cu_eft_ace_ds_model_params_m.jld2")
+model_params = load_object("$(model_path)h2cu_eft_ace_ds_model_params_m.jld2")
 
-species_friction = model_params["species_friction"]
-species_env = model_params["species_env"]
-bond_weight = model_params["bond_weight"]
-n_rep_cov = model_params["n_rep_cov"]
-n_rep_equ = model_params["n_rep_equ"]
-max_order_on = model_params["max_order_on"]
-max_degree_on = model_params["max_degree_on"]
-rcut = model_params["cutoff"]
-
-m_cov = ac_matrixmodel(ACE.EuclideanVector(Float64),species_friction,species_env;n_rep=n_rep_cov, rcut_on = rcut, rcut_off = rcut, maxorder_on=max_order_on, maxdeg_on=max_degree_on,
+m_cov = ac_matrixmodel(ACE.EuclideanVector(Float64),model_params["species_friction"],model_params["species_env"];n_rep=model_params["n_rep_cov"], rcut_on = model_params["cutoff"], rcut_off = model_params["cutoff"], maxorder_on=model_params["max_order_on"], maxdeg_on=model_params["max_degree_on"],
         species_maxorder_dict_on = model_params["species_maxorder_dict_on_cov"], 
         species_weight_cat_on = model_params["species_weight_cat_on_cov"],
         species_maxorder_dict_off = model_params["species_maxorder_dict_off_cov"], 
         species_weight_cat_off = model_params["species_weight_cat_off_cov"],
-        bond_weight = bond_weight
-    );
-m_equ = ac_matrixmodel(ACE.EuclideanMatrix(Float64),species_friction,species_env;n_rep=n_rep_equ, rcut_on = rcut, rcut_off = rcut, maxorder_on=max_order_on, maxdeg_on=max_degree_on,
+        bond_weight = model_params["bond_weight"]
+    )
+m_equ = ac_matrixmodel(ACE.EuclideanMatrix(Float64),model_params["species_friction"],model_params["species_env"];n_rep=model_params["n_rep_equ"], rcut_on = model_params["cutoff"], rcut_off = model_params["cutoff"], maxorder_on=model_params["max_order_on"], maxdeg_on=model_params["max_degree_on"],
         species_maxorder_dict_on = model_params["species_maxorder_dict_on_equ"], 
         species_weight_cat_on = model_params["species_weight_cat_on_equ"],
         species_maxorder_dict_off = model_params["species_maxorder_dict_off_equ"], 
         species_weight_cat_off = model_params["species_weight_cat_off_equ"],
-        bond_weight = bond_weight
-    );
+        bond_weight = model_params["bond_weight"]
+    )
 
-c_fit = load_object("aceds_model/h2cu_eft_ace_ds_model_c_fit.jld2")
+c_fit = load_object("$(model_path)h2cu_eft_ace_ds_model_c_fit.jld2")
 eft_model_ace = FrictionModel((m_cov,m_equ))
 ACE.set_params!(eft_model_ace, c_fit)
 
