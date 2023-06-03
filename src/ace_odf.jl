@@ -17,13 +17,14 @@ function ACEdsODF(model, gamma, atoms_julip; friction_unit=u"ps^-1")
     ACEdsODF(model, gamma, atoms_julip, friction_unit)
 end
 
-function set_coordinates!(model::ACEdsODF, R)
-    model.atoms_julip.X = ustrip.(auconvert.(u"Å", R'))
+function set_coordinates!(model::ACEdsODF, R) 
+    R_ = ustrip.(auconvert.(u"Å", R')) 
+    model.atoms_julip.X = [R_[i,:] for i in 1:size(R_,1)]
 end
 
 function friction!(model::ACEdsODF, R::AbstractMatrix, friction::AbstractMatrix, friction_atoms::AbstractVector, cutoff::Float64)
     set_coordinates!(model, R)
 
-    friction = reinterpret(Matrix,Matrix(model.gamma(model.model, model.atoms_julip)[friction_atoms, friction_atoms]))
+    friction .= reinterpret(Matrix,Matrix(model.gamma(model.model, model.atoms_julip)[friction_atoms, friction_atoms]))
     friction = austrip.(friction .* model.friction_unit)
 end

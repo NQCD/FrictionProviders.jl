@@ -13,6 +13,7 @@ include("cube_density.jl")
 include("scikit_density.jl")
 include("odf_friction.jl")
 include("schnet_odf.jl")
+include("ace_odf.jl")
 
 export LDFAFriction
 export CubeDensity

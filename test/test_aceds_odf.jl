@@ -4,7 +4,6 @@ using PyCall: pyimport
 using NQCBase: NQCBase
 using NQCModels: FrictionModels
 using Unitful: @u_str
-
 using ACE
 using ACEds: ac_matrixmodel
 using ACEds.FrictionModels
@@ -40,6 +39,7 @@ n_rep_cov = model_params["n_rep_cov"]
 n_rep_equ = model_params["n_rep_equ"]
 max_order_on = model_params["max_order_on"]
 max_degree_on = model_params["max_degree_on"]
+rcut = model_params["cutoff"]
 
 m_cov = ac_matrixmodel(ACE.EuclideanVector(Float64),species_friction,species_env;n_rep=n_rep_cov, rcut_on = rcut, rcut_off = rcut, maxorder_on=max_order_on, maxdeg_on=max_degree_on,
         species_maxorder_dict_on = model_params["species_maxorder_dict_on_cov"], 
@@ -69,7 +69,7 @@ odf_model = ODFriction(aceds_model; friction_atoms=[55, 56])
 
 ### TEST THE MODEL
 
-@testset "SchNetModel!" begin
+@testset "ACEdsModel!" begin
     F = zeros(3*56, 3*56)
     r = @view R[:,1]
     r .= 0
