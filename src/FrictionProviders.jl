@@ -4,7 +4,7 @@ using DataInterpolations: CubicSpline
 using DelimitedFiles: readdlm
 using UnitfulAtomic: austrip, auconvert
 using Unitful: @u_str, ustrip
-using NQCBase: PeriodicCell, apply_cell_boundaries!
+using NQCBase: PeriodicCell, apply_cell_boundaries!, au_to_ang
 using NQCModels: NQCModels, FrictionModels, Model
 
 include("ldfa_friction.jl")

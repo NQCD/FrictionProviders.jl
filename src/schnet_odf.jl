@@ -1,7 +1,6 @@
 """
 This script includes using SchNet ML model based on electronic_friction package, to generate electronic friction tensor
 """
-using NQCBase: au_to_ang
 
 struct SchNetODF{C,A,U}
     "SchNet/friction_tensor calculator"
