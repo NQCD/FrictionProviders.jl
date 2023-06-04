@@ -25,7 +25,6 @@ end
 
 function friction!(model::ACEdsODF, R::AbstractMatrix, friction::AbstractMatrix, friction_atoms::AbstractVector, cutoff::Float64)
     set_coordinates!(model, R)
-    JuLIP.set_positions!(model.atoms, au_to_ang.(R))
     friction .= reinterpret(Matrix,Matrix(model.gamma(model.model, model.atoms_julip)[friction_atoms, friction_atoms]))
     friction = austrip.(friction .* model.friction_unit)
 end
