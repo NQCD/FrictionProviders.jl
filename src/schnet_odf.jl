@@ -1,6 +1,7 @@
 """
 This script includes using SchNet ML model based on electronic_friction package, to generate electronic friction tensor
 """
+using NQCBase: au_to_ang
 
 struct SchNetODF{C,A,U}
     "SchNet/friction_tensor calculator"
@@ -16,7 +17,7 @@ function SchNetODF(calculator, atoms_ase; friction_unit=u"ps^-1")
 end
 
 function set_coordinates!(model::SchNetODF, R)
-    model.atoms_ase.set_positions(ustrip.(auconvert.(u"Å", R')))
+    model.atoms_ase.set_positions(au_to_ang.(R'))
 end
 
 
