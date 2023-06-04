@@ -20,7 +20,7 @@ function ACEdsODF(model, gamma, atoms_julip, position_setter; friction_unit=u"ps
 end
 
 function set_coordinates!(model::ACEdsODF, R) 
-    position_setter(model.atoms_julip, ustrip.(auconvert.(u"Å", R)) )
+    model.position_setter(model.atoms_julip, ustrip.(auconvert.(u"Å", R)) )
 end
 
 function friction!(model::ACEdsODF, R::AbstractMatrix, friction::AbstractMatrix, friction_atoms::AbstractVector, cutoff::Float64)
