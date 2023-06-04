@@ -50,7 +50,7 @@ ACE.set_params!(eft_model_ace, c_fit)
 
 ### SET THE ODF MODEL
 
-aceds_model = ACEdsODF(eft_model_ace, Gamma, julip_atoms; friction_unit=u"ps^-1")
+aceds_model = ACEdsODF(eft_model_ace, Gamma, julip_atoms, JuLIP.set_positions!; friction_unit=u"ps^-1")
 odf_model = ODFriction(aceds_model; friction_atoms=[55, 56])
 
 
