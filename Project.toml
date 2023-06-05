@@ -11,6 +11,7 @@ NQCModels = "c814dc9f-a51f-4eaf-877f-82eda4edad48"
 StaticArrays = "90137ffa-7385-5640-81b9-e52037218182"
 Unitful = "1986cc42-f94f-5a68-af5c-568840ba703d"
 UnitfulAtomic = "a7773ee8-282e-5fa2-be4e-bd808c38a91a"
+JuLIP = "945c410c-986d-556a-acb1-167a618e0462"
 
 [compat]
 DataInterpolations = "3, 4"
