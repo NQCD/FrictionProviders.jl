@@ -28,5 +28,5 @@ function friction!(model::SchNetODF, R::AbstractMatrix, friction::AbstractMatrix
     end
     friction .= austrip.(friction .* model.friction_unit)
     friction .*= mass_weights
-    friction .= austrip.(friction *. u"u")
+    friction .= austrip.(friction .* u"u")
 end
