@@ -19,11 +19,12 @@ end
 
 function friction!(model::ACEdsODF, R::AbstractMatrix, friction::AbstractMatrix, friction_atoms::AbstractVector, cutoff::Float64)
     set_positions!(model.atoms_julip, au_to_ang.(R))
+    DoFs = size(R, 1)
     friction .= reinterpret(Matrix,Matrix(model.gamma(model.model, model.atoms_julip)[friction_atoms, friction_atoms]))
-    mass_weights = zeros(length(friction_atoms)*3,length(friction_atoms)*3)
+    mass_weights = zeros(length(friction_atoms)*DoFs,length(friction_atoms)*DoFs)
     for fx in 1:size(mass_weights,1)
         for fy in 1:size(mass_weights,2)
-            mass_weights = sqrt(model.atoms_julip.M[friction_atoms[Int(ceil(fx/3,digits=0))]])*sqrt(model.atoms_julip.M[friction_atoms[Int(ceil(fy/3,digits=0))]])
+            mass_weights[fx,fy] = sqrt(model.atoms_julip.M[friction_atoms[Int(ceil(fx/DoFs,digits=0))]])*sqrt(model.atoms_julip.M[friction_atoms[Int(ceil(fy/DoFs,digits=0))]])
         end
     end
     friction .= austrip.(friction .* model.friction_unit)
