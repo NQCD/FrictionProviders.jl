@@ -9,22 +9,24 @@ struct ACEdsODF{M,G,A,U,P}
     gamma::G
     "JuLIP atoms object"
     atoms_julip::A
-    "JuLIP position setter"
-    position_setter::P
     "Units"
     friction_unit::U
 end
 
-function ACEdsODF(model, gamma, atoms_julip, position_setter; friction_unit=u"ps^-1")
-    ACEdsODF(model, gamma, atoms_julip, position_setter, friction_unit)
-end
-
-function set_coordinates!(model::ACEdsODF, R) 
-    model.position_setter(model.atoms_julip, au_to_ang.(R))
+function ACEdsODF(model, gamma, atoms_julip; friction_unit=u"ps^-1")
+    ACEdsODF(model, gamma, atoms_julip, friction_unit)
 end
 
 function friction!(model::ACEdsODF, R::AbstractMatrix, friction::AbstractMatrix, friction_atoms::AbstractVector, cutoff::Float64)
-    set_coordinates!(model, R)
+    set_positions!(model.atoms_julip, au_to_ang.(R))
     friction .= reinterpret(Matrix,Matrix(model.gamma(model.model, model.atoms_julip)[friction_atoms, friction_atoms]))
-    friction = austrip.(friction .* model.friction_unit)
+    mass_weights = zeros(length(friction_atoms)*3,length(friction_atoms)*3)
+    for fx in 1:size(mass_weights,1)
+        for fy in 1:size(mass_weights,2)
+            mass_weights = sqrt(model.atoms_julip.M[friction_atoms[Int(ceil(fx/3,digits=0))]])*sqrt(model.atoms_julip.M[friction_atoms[Int(ceil(fy/3,digits=0))]])
+        end
+    end
+    friction .= austrip.(friction .* model.friction_unit)
+    friction .*= mass_weights
+    friction .= austrip.(friction *. u"u")
 end

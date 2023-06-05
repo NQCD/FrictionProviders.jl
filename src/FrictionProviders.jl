@@ -6,6 +6,7 @@ using UnitfulAtomic: austrip, auconvert
 using Unitful: @u_str, ustrip
 using NQCBase: PeriodicCell, apply_cell_boundaries!, au_to_ang
 using NQCModels: NQCModels, FrictionModels, Model
+using JuLIP: set_positions!
 
 include("ldfa_friction.jl")
 include("cube.jl")
