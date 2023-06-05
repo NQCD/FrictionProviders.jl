@@ -2,7 +2,7 @@
 This script includes using SchNet ML model based on electronic_friction package, to generate electronic friction tensor
 """
 
-struct ACEdsODF{M,G,A,U,P}
+struct ACEdsODF{M,G,A,U}
     "ACE/friction_tensor calculator"
     model::M
     "Gamma ACEds function"
