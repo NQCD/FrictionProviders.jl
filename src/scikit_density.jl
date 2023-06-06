@@ -20,13 +20,10 @@ function SciKitDensity(descriptors, ml_model, atoms_ase; density_unit=u"Å^-3", 
     SciKitDensity(descriptors, ml_model, atoms_ase, density_unit, scaler)
 end
 
-function set_coordinates!(model::SciKitDensity, R)
-    model.atoms_ase.set_positions(ustrip.(auconvert.(u"Å", R')))
-end
 
 function density!(model::SciKitDensity, rho::AbstractVector, R::AbstractMatrix, friction_atoms::AbstractVector)
     for i in friction_atoms
-        set_coordinates!(model, R)
+        model.atoms_ase.set_positions(au_to_ang.(R'))
         density_atoms = model.atoms_ase.copy()
         friction_atoms_srtd = sort(friction_atoms, rev=true)
         for j=1:length(friction_atoms_srtd)

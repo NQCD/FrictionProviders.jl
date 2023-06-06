@@ -15,14 +15,19 @@ function SchNetODF(calculator, atoms_ase; friction_unit=u"ps^-1")
     SchNetODF(calculator, atoms_ase, friction_unit)
 end
 
-function set_coordinates!(model::SchNetODF, R)
-    model.atoms_ase.set_positions(ustrip.(auconvert.(u"Å", R')))
-end
-
 
 function friction!(model::SchNetODF, R::AbstractMatrix, friction::AbstractMatrix, friction_atoms::AbstractVector, cutoff::Float64)
-    set_coordinates!(model, R)
+    model.atoms_ase.set_positions(au_to_ang.(R'))
+    DoFs = size(R, 1)
     model.calculator.calculate(model.atoms_ase)
     friction .= model.calculator.get_friction_tensor()
-    friction = austrip.(friction .* model.friction_unit)
+    mass_weights = zeros(length(friction_atoms)*DoFs,length(friction_atoms)*DoFs)
+    for fx in 1:size(mass_weights,1)
+        for fy in 1:size(mass_weights,2)
+            mass_weights[fx,fy] = sqrt(model.atoms_ase[friction_atoms[Int(ceil(fx/DoFs,digits=0))]].mass)*sqrt(model.atoms_ase[friction_atoms[Int(ceil(fy/DoFs,digits=0))]].mass)
+        end
+    end
+    friction .= austrip.(friction .* model.friction_unit)
+    friction .*= mass_weights
+    friction .= austrip.(friction .* u"u")
 end
