@@ -4,6 +4,7 @@ using PyCall: pyimport
 using NQCBase: NQCBase
 using NQCModels: FrictionModels
 using Unitful: @u_str
+using UnitfulAtomic
 using ACE
 using ACEds: ac_matrixmodel
 using ACEds.FrictionModels
@@ -64,18 +65,18 @@ odf_model = ODFriction(aceds_model; friction_atoms=friction_ids)
     F = F[(friction_ids[1]-1)*3+1:friction_ids[2]*3,(friction_ids[1]-1)*3+1:friction_ids[2]*3]
 
     DoFs = size(R, 1)
-    mass_weights = zeros(length(friction_atoms)*DoFs,length(friction_atoms)*DoFs)
+    mass_weights = zeros(length(friction_ids)*DoFs,length(friction_ids)*DoFs)
     for fx in 1:size(mass_weights,1)
         for fy in 1:size(mass_weights,2)
-            mass_weights[fx,fy] = sqrt(atoms.masses[friction_atoms[Int(ceil(fx/DoFs,digits=0))]])*sqrt(atoms.masses[friction_atoms[Int(ceil(fy/DoFs,digits=0))]])
+            mass_weights[fx,fy] = sqrt(atoms.masses[friction_ids[Int(ceil(fx/DoFs,digits=0))]])*sqrt(atoms.masses[friction_ids[Int(ceil(fy/DoFs,digits=0))]])
         end
     end
 
     F ./= mass_weights
     F .= auconvert.(u"ps^-1", F)/u"ps^-1" # F / ps^-1
 
-    F_direct = zeros(length(friction_atoms)*DoFs,length(friction_atoms)*DoFs)
-    F_direct .= reinterpret(Matrix,Matrix(Gamma(eft_model_ace, julip_atoms)[friction_atoms, friction_atoms]))
+    F_direct = zeros(length(friction_ids)*DoFs,length(friction_ids)*DoFs)
+    F_direct .= reinterpret(Matrix,Matrix(Gamma(eft_model_ace, julip_atoms)[friction_ids, friction_ids]))
 
-    F ≈ F_direct
+    @test F ≈ F_direct
 end
