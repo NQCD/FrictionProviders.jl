@@ -49,31 +49,33 @@ ACE.set_params!(eft_model_ace, c_fit)
 
 
 ### SET THE ODF MODEL
-
+friction_ids = [55,56]
 aceds_model = ACEdsODF(eft_model_ace, Gamma, julip_atoms; friction_unit=u"ps^-1")
-odf_model = ODFriction(aceds_model; friction_atoms=[55, 56])
+odf_model = ODFriction(aceds_model; friction_atoms=friction_ids)
 
 
 ### TEST THE MODEL
 
-@testset "ACEdsModel!" begin
+@testset "ACEdsEFTModel!" begin
     F = zeros(3*56, 3*56)
     r = @view R[:,1]
     r .= 0
     FrictionModels.friction!(odf_model, F, R)
+    F = F[(friction_ids[1]-1)*3+1:friction_ids[2]*3,(friction_ids[1]-1)*3+1:friction_ids[2]*3]
 
-    for _=1:10
-        r .= 0
-        r += rand() * cell.vectors[:,1]
-        r += rand() * cell.vectors[:,2]
-        r += rand() * cell.vectors[:,3]
-
-        FrictionModels.friction!(odf_model, F, R)
+    DoFs = size(R, 1)
+    mass_weights = zeros(length(friction_atoms)*DoFs,length(friction_atoms)*DoFs)
+    for fx in 1:size(mass_weights,1)
+        for fy in 1:size(mass_weights,2)
+            mass_weights[fx,fy] = sqrt(atoms.masses[friction_atoms[Int(ceil(fx/DoFs,digits=0))]])*sqrt(atoms.masses[friction_atoms[Int(ceil(fy/DoFs,digits=0))]])
+        end
     end
 
-    r = cell.vectors[:,1] + cell.vectors[:,2] + cell.vectors[:,3]
-    FrictionModels.friction!(odf_model, F, R)
+    F ./= mass_weights
+    F .= auconvert.(u"ps^-1", F)/u"ps^-1" # F / ps^-1
 
-    r = cell.vectors[:,1] + cell.vectors[:,2] + cell.vectors[:,3] + rand(3)
-    FrictionModels.friction!(odf_model, F, R)
+    F_direct = zeros(length(friction_atoms)*DoFs,length(friction_atoms)*DoFs)
+    F_direct .= reinterpret(Matrix,Matrix(Gamma(eft_model_ace, julip_atoms)[friction_atoms, friction_atoms]))
+
+    F ≈ F_direct
 end
