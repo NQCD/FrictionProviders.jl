@@ -10,20 +10,21 @@ using Unitful: @u_str
 dscr_d = pyimport("dscribe.descriptors")
 aseio = pyimport("ase.io")
 
-model_ml = read_pickle("scikit_model_h2cu.sav")
+model_ml = read_pickle("scikit_model/model_density_soap_h2cu.sav")
+scaler_ml = read_pickle("scikit_model/scaler_density_soap_h2cu.sav")
 ase_atoms = aseio.read("h2cu_start.in")
 atoms, R, cell =  NQCBase.convert_from_ase_atoms(ase_atoms)
 
 desc = dscr_d.SOAP(
     species = ["Cu", "H"],
     periodic = true,
-    r_cut = 2.5,
-    n_max = 1,
-    l_max = 1,
+    r_cut = 7.0,
+    n_max = 12,
+    l_max = 8,
     average="off" 
 )
 
-density_model = SciKitDensity(desc, model_ml, ase_atoms; density_unit=u"Å^-3")
+density_model = SciKitDensity(desc, model_ml, ase_atoms; density_unit=u"Å^-3", scaler=scaler_ml)
 model = LDFAFriction(density_model, atoms; friction_atoms=[55, 56])
 
 @testset "ScikitModel!" begin
