@@ -10,8 +10,8 @@ using Unitful: @u_str
 dscr_d = pyimport("dscribe.descriptors")
 aseio = pyimport("ase.io")
 
-model_ml = read_pickle("scikit_model/model_density_soap_h2cu.sav")
-scaler_ml = read_pickle("scikit_model/scaler_density_soap_h2cu.sav")
+model_ml = read_pickle("scikit_model/model_density_soap_h2cu.pkl")
+scaler_ml = read_pickle("scikit_model/scaler_density_soap_h2cu.pkl")
 ase_atoms = aseio.read("h2cu_start.in")
 atoms, R, cell =  NQCBase.convert_from_ase_atoms(ase_atoms)
 
