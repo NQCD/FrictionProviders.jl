@@ -10,17 +10,17 @@ using Unitful: @u_str
 dscr_d = pyimport("dscribe.descriptors")
 aseio = pyimport("ase.io")
 
-model_ml = read_pickle("scikit_model/model_density_soap_h2cu.pkl")
-scaler_ml = read_pickle("scikit_model/scaler_density_soap_h2cu.pkl")
+model_ml = read_pickle("scikit_models/density_soap_h2cu_lghtst.pkl")
+scaler_ml = read_pickle("scikit_models/scaler_density_soap_h2cu_lghtst.pkl")
 ase_atoms = aseio.read("h2cu_start.in")
 atoms, R, cell =  NQCBase.convert_from_ase_atoms(ase_atoms)
 
 desc = dscr_d.SOAP(
     species = ["Cu", "H"],
     periodic = true,
-    r_cut = 7.0,
-    n_max = 12,
-    l_max = 8,
+    r_cut = 3.0, # 7
+    n_max = 2, # 12
+    l_max = 2, # 8
     average="off" 
 )
 
