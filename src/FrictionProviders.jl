@@ -15,6 +15,7 @@ include("scikit_density.jl")
 include("odf_friction.jl")
 include("schnet_odf.jl")
 include("ace_odf.jl")
+include("ace_density.jl")
 
 export LDFAFriction
 export CubeDensity
@@ -22,5 +23,6 @@ export SciKitDensity
 export ODFriction
 export SchNetODF
 export ACEdsODF
+export ACEDensity
 
 end
