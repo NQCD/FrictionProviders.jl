@@ -17,7 +17,8 @@ end
 
 function density!(model::ACEDensity, rho::AbstractVector, R::AbstractMatrix, friction_atoms::AbstractVector)
     for i in friction_atoms
-        xR = R[:,[1:end-2,i]]
+        xR = R[:,1:end-length(friction_atoms)+1]
+        xR[:,end]=R[:,i]
         rho[i] = austrip(NQCModels.potential(model.ml_model, xR) * model.density_unit)
     end
 end
