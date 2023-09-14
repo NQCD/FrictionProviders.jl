@@ -6,21 +6,25 @@ using NQCModels: FrictionModels
 using Pandas: read_pickle
 using Unitful: @u_str
 
-function ace_model(model_path, cur_atoms)
-    IP = ACE1.read_dict(load_dict(model_path)["IP"])
-    JuLIP.set_calculator!(cur_atoms, IP)
-    
-    model = AdiabaticModels.JuLIPModel(cur_atoms)
-end
-
-# ACE MODEL
+# SCI-KIT MODEL
+dscr_d = pyimport("dscribe.descriptors")
 aseio = pyimport("ase.io")
 
+model_ml = read_pickle("scikit_models/density_soap_h2cu_lghtst.pkl")
+scaler_ml = read_pickle("scikit_models/scaler_density_soap_h2cu_lghtst.pkl")
 ase_atoms = aseio.read("h2cu_start.in")
 atoms, R, cell =  NQCBase.convert_from_ase_atoms(ase_atoms)
-model_ml = ace_model("ace_dens_model/h2cu_ace.json", ase_atoms)
 
-density_model = ACEDensity(model_ml; density_unit=u"Å^-3")
+desc = dscr_d.SOAP(
+    species = ["Cu", "H"],
+    periodic = true,
+    r_cut = 3.0, # 7
+    n_max = 2, # 12
+    l_max = 2, # 8
+    average="off" 
+)
+
+density_model = SciKitLDFA(desc, model_ml, ase_atoms; density_unit=u"Å^-3", scaler=scaler_ml)
 model = LDFAFriction(density_model, atoms; friction_atoms=[55, 56])
 
 @testset "ScikitModel!" begin

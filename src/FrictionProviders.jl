@@ -10,19 +10,20 @@ using JuLIP: set_positions!
 
 include("ldfa_friction.jl")
 include("cube.jl")
-include("cube_density.jl")
-include("scikit_density.jl")
+include("cube_ldfa.jl")
+include("scikit_ldfa.jl")
+include("ace_ldfa.jl")
 include("odf_friction.jl")
 include("schnet_odf.jl")
 include("ace_odf.jl")
-include("ace_density.jl")
 
 export LDFAFriction
-export CubeDensity
-export SciKitDensity
-export ODFriction
+export AceLDFA
+export CubeLDFA
+export SciKitLDFA
+export ODFrictio
 export SchNetODF
 export ACEdsODF
-export ACEDensity
+
 
 end
