@@ -8,7 +8,7 @@ aseio = pyimport("ase.io")
 ase_atoms = aseio.read("start.in")
 atoms, R, cell =  NQCBase.convert_from_ase_atoms(ase_atoms)
 
-density_model = CubeDensity("test.cube", cell)
+density_model = CubeLDFA("test.cube", cell)
 model = LDFAFriction(density_model, atoms; friction_atoms=[1, 2])
 
 @testset "friction!" begin
