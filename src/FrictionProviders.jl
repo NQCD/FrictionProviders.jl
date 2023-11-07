@@ -21,7 +21,7 @@ export LDFAFriction
 export AceLDFA
 export CubeLDFA
 export SciKitLDFA
-export ODFrictio
+export ODFriction
 export SchNetODF
 export ACEdsODF
 
