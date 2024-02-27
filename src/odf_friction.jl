@@ -1,28 +1,23 @@
-struct ODFriction{C,F,D}
+struct ODFriction{C,D} <: NQCModels.FrictionModels.ElectronicFrictionProvider
     "Friction model"
-    model::C
-    "Temporary vector for storing friction output of model"
-    friction::F
+    eft_model::C
     "Indices of atoms that should have friction applied."
     friction_atoms::Vector{Int}
     "Cutoff distance"
     cutoff::D
 end
 
-function ODFriction(model; friction_atoms=collect(range(atoms)), cutoff=Float64(5.0))
-    natoms = length(friction_atoms)
-    friction = zeros(natoms*3,natoms*3)
-
-    ODFriction(model, friction, friction_atoms, cutoff)
-end
+ODFriction(eft_model; friction_atoms=collect(range(atoms)), cutoff=Float64(5.0))=ODFriction(eft_model, friction_atoms, cutoff)
 
 NQCModels.ndofs(model::ODFriction) = 3
 
 function FrictionModels.friction!(model::ODFriction, F::AbstractMatrix, R::AbstractMatrix)
-    friction!(model.model, R, model.friction, model.friction_atoms, model.cutoff)
-    
-    DoFs = size(R, 1)
-    F[(model.friction_atoms[1]-1)*DoFs+1:(model.friction_atoms[2])*DoFs, (model.friction_atoms[1]-1)*DoFs+1:(model.friction_atoms[2])*DoFs] = model.friction
-    
-    return F
+    indices=friction_matrix_indices(model.friction_atoms, NQCModels.ndofs(model))  
+    F[indices, indices] .= get_friction_matrix(model.eft_model, R, model.friction_atoms, model.cutoff) 
+end
+
+# Overload friction function to map friction_atoms to Subsystem indices
+function FrictionModels.friction!(system::Subsystem{<:ODFriction}, F::AbstractMatrix, R::AbstractMatrix)
+    indices=friction_matrix_indices(collect(1:length(system.model.friction_atoms)), NQCModels.ndofs(system))
+    F[indices, indices] .= get_friction_matrix(system.model.eft_model, R, system.model.friction_atoms, system.model.cutoff)
 end
