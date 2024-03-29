@@ -24,6 +24,7 @@ export SciKitLDFA
 export ODFriction
 export SchNetODF
 export ACEdsODF
+export ACEdsODF_d2
 
 
 end
