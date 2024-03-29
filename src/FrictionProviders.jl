@@ -16,6 +16,7 @@ include("ace_ldfa.jl")
 include("odf_friction.jl")
 include("schnet_odf.jl")
 include("ace_odf.jl")
+include("ace_odf_d2.jl")
 
 export LDFAFriction
 export AceLDFA
