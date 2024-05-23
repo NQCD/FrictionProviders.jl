@@ -91,29 +91,32 @@ function skfriction!(model::SciKitFriction,R::AbstractMatrix, f::AbstractMatrix,
 
 
 
-    # ODF-S1 model3
+    # ODF-S1 model3:  This model shifts the z coordinate of the spin peak.
+    # It gave very poor results during a trajectory, so we no longer use it.
+
 
     # Find minimum xy distance to Pt atom
-    idx1 = [1]
-    idx2 = [22,23,24,25]
-    dist_to_top = find_min_xy_dist(model.atoms, idx1, idx2)
-    offset = (1.6163596822847763-dist_to_top)*0.125
+    #idx1 = [1]
+    #idx2 = [22,23,24,25]
+    #dist_to_top = find_min_xy_dist(model.atoms, idx1, idx2)
+    #offset = (1.6163596822847763-dist_to_top)*0.125
 
     # Evaluate spin peak fit shifted due to proximity to top site
-    if (model.atoms.positions[1,3])>=(13.71)
-        fit = fitted_function((model.atoms.positions[1,3]+offset))
-        if fit>1.
-            m_out[3] = fit
-        elseif (model.atoms.positions[1,3])>=(13.93)
-            m_out[3] = fit 
-        end
-    end 
+    #if (model.atoms.positions[1,3])>=(13.71)
+    #    fit = fitted_function((model.atoms.positions[1,3]+offset))
+    #    if fit>1.
+    #        m_out[3] = fit
+    #    elseif (model.atoms.positions[1,3])>=(13.93)
+    #        m_out[3] = fit 
+    #    end
+    #end 
 
 
     # ODF-S1 model2
-    # if (model.atoms.positions[1,3])>=13.71
-    #     m_out[3] = fitted_function((model.atoms.positions[1,3]))
-    # end
+    # This model has the spin peak at a fixed z coordinate.
+    if (model.atoms.positions[1,3])>=13.71
+        m_out[3] = fitted_function((model.atoms.positions[1,3]))
+    end
 
     m_out = austrip.(m_out.* model.friction_unit)
 
