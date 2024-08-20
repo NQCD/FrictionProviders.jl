@@ -1,7 +1,7 @@
 using FrictionProviders
 using Test
 using NQCBase
-using PyCall
+using PythonCall
 
 
 py"""

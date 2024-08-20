@@ -4,14 +4,13 @@ provided by Gerrits et al. in PHYSICAL REVIEW B 102, 155130 (2020).
 """
 
 struct AceLDFA{L,U}
-    "Sci-Kit ML model"
-    ml_model::L
+    friction_IP::L
     "Units"
     density_unit::U
 end
 
-function AceLDFA(ml_model; density_unit=u"Å^-3")
-    AceLDFA(ml_model, density_unit)
+function AceLDFA(friction_IP; density_unit=u"Å^-3")
+    AceLDFA(friction_IP, density_unit)
 end
 
 
@@ -21,6 +20,6 @@ function density!(model::AceLDFA, rho::AbstractVector, R::AbstractMatrix, fricti
     for i in friction_atoms
         xR = R[:,one_frictionatom_indices] 
         xR[:,end]=R[:,i]
-        rho[i] = austrip(au_to_eV(NQCModels.potential(model.ml_model, xR)) * model.density_unit)
+        rho[i] = austrip(au_to_eV(NQCModels.potential(model.friction_IP, xR)) * model.density_unit)
     end
 end

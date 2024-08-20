@@ -13,7 +13,7 @@ struct LDFAFriction{D,T,S} <: NQCModels.FrictionModels.ElectronicFrictionProvide
     ndofs::Int
 end
 
-function LDFAFriction(density, atoms; friction_atoms=collect(range(atoms))) 
+function LDFAFriction(density, atoms; friction_atoms=collect(Int, range(atoms))) 
     ldfa_data, _ = readdlm(joinpath(@__DIR__, "ldfa.txt"), ',', header=true)
     r = ldfa_data[:,1]
     splines = []

@@ -1,6 +1,6 @@
 using Test
 using FrictionProviders
-using PyCall: pyimport
+using PythonCall
 using NQCBase: NQCBase
 using NQCModels: FrictionModels
 

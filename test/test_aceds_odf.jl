@@ -1,6 +1,6 @@
 using Test
 using FrictionProviders
-using PyCall: pyimport
+using PythonCall
 using NQCBase: NQCBase
 using NQCModels: FrictionModels
 using Unitful: @u_str
@@ -10,7 +10,6 @@ using ACEds: ac_matrixmodel
 using ACEds.FrictionModels
 using ACEds.FrictionModels: Gamma
 using JuLIP
-using ASE
 using JLD2
 
 aseio = pyimport("ase.io")
@@ -20,9 +19,8 @@ atoms_path = "h2cu_start.in"
 model_path = "aceds_model/"
 
 ase_atoms = aseio.read(atoms_path)
-ase_jl = ASE.ASEAtoms(ase_atoms)
-julip_atoms = JuLIP.Atoms(ase_jl)
 atoms, R, cell =  NQCBase.convert_from_ase_atoms(ase_atoms)
+julip_atoms = JuLIP.Atoms(NQCBase.System(atoms, R, cell))
 
 
 ### LOAD ACEds MODEL

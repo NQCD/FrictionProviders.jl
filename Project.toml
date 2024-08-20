@@ -18,8 +18,7 @@ UnitfulAtomic = "a7773ee8-282e-5fa2-be4e-bd808c38a91a"
 DataInterpolations = "3, 4"
 JuLIP = "0.13, 0.14"
 NQCBase = "0.1, 0.2"
-NQCModels = "0.8.30"
-PyCall = "1"
+NQCModels = "0.8.30 0.9"
 StaticArrays = "1"
 Unitful = "1"
 UnitfulAtomic = "1"
@@ -27,9 +26,9 @@ julia = "1"
 
 [extras]
 Pandas = "eadc2687-ae89-51f9-a5d9-86b5a6373a9c"
-PyCall = "438e738f-606a-5dbb-bf0a-cddfbfd45ab0"
+PythonCall = "6099a3de-0909-46bc-b1f4-468b9a2dfc0d"
 SafeTestsets = "1bc83da4-3b8d-516f-aca4-4fe02f6d838f"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [targets]
-test = ["Pandas", "PyCall", "SafeTestsets", "Test"]
+test = ["Pandas", "PythonCall", "SafeTestsets", "Test"]
