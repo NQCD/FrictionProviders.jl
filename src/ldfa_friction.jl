@@ -37,7 +37,7 @@ function get_friction_matrix(model::LDFAFriction, R::AbstractMatrix)
     density!(model.density, model.rho, R, model.friction_atoms)
     clamp!(model.rho, 0, Inf)
     @. model.radii = 1 / cbrt(4 / 3 * π * model.rho)
-    if any(model.radii < 1.5) # Debug printout
+    if any(model.radii .< 1.5) # Debug printout
         @debug "Structure will fail extrapolation:" positions = R density = model.density radii = model.radii
     end
     η(r) = r < 10 ? model.splines[1](r) : 0.0
