@@ -40,9 +40,7 @@ function get_friction_matrix(model::LDFAFriction, R::AbstractMatrix)
     try
         η(r) = r < 10 ? model.splines[1](r) : 0.0
     catch e
-        if isa(e, DataInterpolations.ExtrapolationError)
-            @error "Extrapolation error in LDFAFriction." positions = R density = model.density radii = model.radii
-        end
+        @error "$(e) in LDFAFriction." positions = R density = model.density radii = model.radii
     end
     return Diagonal(diagm(repeat(η.(model.radii[model.friction_atoms]), inner=NQCModels.ndofs(model))))
 end
