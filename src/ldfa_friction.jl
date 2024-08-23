@@ -13,12 +13,12 @@ struct LDFAFriction{D,T,S} <: NQCModels.FrictionModels.ElectronicFrictionProvide
     ndofs::Int
 end
 
-function LDFAFriction(density, atoms; friction_atoms=collect(Int, range(atoms))) 
+function LDFAFriction(density, atoms; friction_atoms=collect(Int, range(atoms)))
     ldfa_data, _ = readdlm(joinpath(@__DIR__, "ldfa.txt"), ',', header=true)
-    r = ldfa_data[:,1]
+    r = ldfa_data[:, 1]
     splines = []
     for i in range(atoms)
-        η = ldfa_data[:,atoms.numbers[i].+1]
+        η = ldfa_data[:, atoms.numbers[i].+1]
         indices = η .!= ""
         ri = convert(Vector{Float64}, r[indices])
         η = convert(Vector{Float64}, η[indices])
@@ -30,21 +30,27 @@ function LDFAFriction(density, atoms; friction_atoms=collect(Int, range(atoms)))
     rho = zeros(length(atoms))
     radii = zero(rho)
 
-    LDFAFriction(density, rho ,radii, splines, friction_atoms, 3)
+    LDFAFriction(density, rho, radii, splines, friction_atoms, 3)
 end
 
 function get_friction_matrix(model::LDFAFriction, R::AbstractMatrix)
     density!(model.density, model.rho, R, model.friction_atoms)
     clamp!(model.rho, 0, Inf)
-    @. model.radii = 1 / cbrt(4/3 * π * model.rho)
-    η(r)=r < 10 ? model.splines[1](r) : 0.0
+    @. model.radii = 1 / cbrt(4 / 3 * π * model.rho)
+    try
+        η(r) = r < 10 ? model.splines[1](r) : 0.0
+    catch e
+        if isa(e, DataInterpolations.ExtrapolationError)
+            @error "Extrapolation error in LDFAFriction." positions = R density = model.density radii = model.radii
+        end
+    end
     return Diagonal(diagm(repeat(η.(model.radii[model.friction_atoms]), inner=NQCModels.ndofs(model))))
 end
 
 export get_friction_matrix
 
 function FrictionModels.friction!(model::LDFAFriction, F::AbstractMatrix, R::AbstractMatrix)
-    friction_atom_indices=friction_matrix_indices(model.friction_atoms, NQCModels.ndofs(model))
+    friction_atom_indices = friction_matrix_indices(model.friction_atoms, NQCModels.ndofs(model))
     F[friction_atom_indices, friction_atom_indices] .= get_friction_matrix(model, R)
 end
 
