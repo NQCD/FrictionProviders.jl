@@ -22,7 +22,7 @@ function LDFAFriction(density, atoms; friction_atoms=collect(range(atoms)))
         η = convert(Vector{Float64}, η[indices])
         push!(ri, 10.0) # Ensure it goes through 0.0 for large r.
         push!(η, 0.0)
-        push!(splines, CubicSpline(η, ri))
+        push!(splines, CubicSpline(η, ri; extrapolate=true))
     end
 
     rho = zeros(length(atoms))
