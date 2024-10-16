@@ -5,7 +5,7 @@ using FrictionProviders
 using Test
 using NQCBase
 using PythonCall
-using PyCall
+using PyCall: pyimport
 
 
 py"""
