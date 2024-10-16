@@ -7,13 +7,10 @@ using NQCBase
 using PythonCall
 using PyCall: pyimport
 
-
-py"""
-import sys
-sys.path.insert(0, ".")
-"""
-
 cube = pyimport("cube")
+sys = pyimport("sys")
+
+sys.path.insert(0, ".")
 
 filename = "test.cube"
 
