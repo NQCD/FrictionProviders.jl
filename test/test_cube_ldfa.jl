@@ -1,5 +1,9 @@
+ENV["JULIA_CONDAPKG_BACKEND"] = "Null"
+ENV["JULIA_PYTHONCALL_EXE"] = "@PyCall"  # optional
+
 using Test
 using FrictionProviders
+using PythonCall
 using PyCall: pyimport
 using NQCBase: NQCBase
 using NQCModels: FrictionModels

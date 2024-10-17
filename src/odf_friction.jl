@@ -22,7 +22,16 @@ function FrictionModels.friction!(model::ODFriction, F::AbstractMatrix, R::Abstr
     friction!(model.model, R, model.friction, model.friction_atoms, model.cutoff)
     
     DoFs = size(R, 1)
-    F[(model.friction_atoms[1]-1)*DoFs+1:(model.friction_atoms[2])*DoFs, (model.friction_atoms[1]-1)*DoFs+1:(model.friction_atoms[2])*DoFs] = model.friction
+
+    for i in 1:length(model.friction_atoms)
+        for j in 1:length(model.friction_atoms)
+            atom_i = model.friction_atoms[i]
+            atom_j = model.friction_atoms[j]
+            
+            F[(atom_i-1)*DoFs+1:atom_i*DoFs, (atom_j-1)*DoFs+1:atom_j*DoFs] = model.friction[(i-1)*DoFs+1:i*DoFs, (j-1)*DoFs+1:j*DoFs]
+        end
+    end
+
     
     return F
 end
