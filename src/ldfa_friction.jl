@@ -1,4 +1,4 @@
-struct LDFAFriction{D,T,S} <: NQCModels.FrictionModels.ElectronicFrictionProvider
+struct LDFAFriction{D,T,S}
     "Density model"
     density::D
     "Temporary array for storing the electron density."
@@ -9,49 +9,58 @@ struct LDFAFriction{D,T,S} <: NQCModels.FrictionModels.ElectronicFrictionProvide
     splines::S
     "Indices of atoms that should have friction applied."
     friction_atoms::Vector{Int}
-    "Degrees of freedom for each atom. (Should be 3)"
-    ndofs::Int
 end
 
-function LDFAFriction(density, atoms; friction_atoms=collect(Int, range(atoms)))
-    ldfa_data, _ = readdlm(joinpath(@__DIR__, "ldfa.txt"), ',', header=true)
-    r = ldfa_data[:, 1]
+"""
+    LDFAFriction(density, atoms; friction_atoms=collect(range(atoms)))
+
+Constructor for an LDFA friction model. This type of model uses the relationship between Wigner-Seitz radii and electron densities to predict electronic friction coefficients based on the electron density. 
+
+## Arguments
+
+1. `density` - An electron density model that can be evaluated using the `density!` function.
+
+2. `atoms` - Atom types in the structure the model is used for. This determines the relationship between electron density and electronic friction coefficient. 
+
+3. `friction_atoms` - Atom indices for which the electronic friction coefficent should be returned. All other atoms will return η=0. 
+
+"""
+function LDFAFriction(density, atoms; friction_atoms=collect(range(atoms)))
+    ldfa_data, _ = readdlm(joinpath(@__DIR__, "ldfa.txt"), ',', header=true) # electron density to electronic friction coefficent relationships taken from Gerrits et al, 2020: https://doi.org/10.1103/PhysRevB.102.155130
+    r = ldfa_data[:,1]
     splines = []
     for i in range(atoms)
-        η = ldfa_data[:, atoms.numbers[i].+1]
+        η = ldfa_data[:,atoms.numbers[i].+1]
         indices = η .!= ""
         ri = convert(Vector{Float64}, r[indices])
         η = convert(Vector{Float64}, η[indices])
         push!(ri, 10.0) # Ensure it goes through 0.0 for large r.
         push!(η, 0.0)
-        push!(splines, CubicSpline(η, ri))
+        push!(splines, CubicSpline(η, ri; extrapolate=false))
     end
 
     rho = zeros(length(atoms))
     radii = zero(rho)
 
-    LDFAFriction(density, rho, radii, splines, friction_atoms, 3)
+    LDFAFriction(density, rho ,radii, splines, friction_atoms)
 end
 
-function get_friction_matrix(model::LDFAFriction, R::AbstractMatrix)
-    density!(model.density, model.rho, R, model.friction_atoms)
-    clamp!(model.rho, 0, Inf)
-    @. model.radii = 1 / cbrt(4 / 3 * π * model.rho)
-    if any(model.radii .< 1.5) # Debug printout
-        @debug "Structure will fail extrapolation:" density = model.rho[model.friction_atoms] radii = model.radii[model.friction_atoms]
-    end
-    η(r) = r < 10 ? model.splines[1](r) : 0.0
-    return Diagonal(diagm(repeat(η.(model.radii[model.friction_atoms]), inner=NQCModels.ndofs(model))))
-end
-
-export get_friction_matrix
+NQCModels.ndofs(model::LDFAFriction) = 3
 
 function FrictionModels.friction!(model::LDFAFriction, F::AbstractMatrix, R::AbstractMatrix)
-    friction_atom_indices = friction_matrix_indices(model.friction_atoms, NQCModels.ndofs(model))
-    F[friction_atom_indices, friction_atom_indices] .= get_friction_matrix(model, R)
-end
-
-# Overload friction function to map friction_atoms to Subsystem indices
-function FrictionModels.friction!(system::Subsystem{<:LDFAFriction}, F::AbstractMatrix, R::AbstractMatrix)
-    F .= get_friction_matrix(system.model, R)
+    density!(model.density, model.rho, R, model.friction_atoms)
+    clamp!(model.rho, 0, Inf)
+    @. model.radii = 1 / cbrt(4/3 * π * model.rho)
+    if any(model.radii .< 1.5)
+        @warn "LDFA model density exceeds the fitting regime from Gerrits2020 (rₛ<1.5). This usually happens when interatomic distances are unusually short and should be investigated. rₛ=1.5 is clamped here so dynamics can continue without errors." maxlog=1
+        clamp!(model.radii, 1.5, 10) # Ensure Wigner-Seitz radii are within spline bounds. 
+    end
+    DoFs = size(R, 1)
+    for i in model.friction_atoms
+        η = model.splines[i](model.radii[i])
+        for j in axes(R, 1)
+            F[(i-1)*DoFs+j, (i-1)*DoFs+j] = η
+        end
+    end
+    return F
 end
