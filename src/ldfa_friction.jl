@@ -37,8 +37,9 @@ function get_friction_matrix(model::LDFAFriction, R::AbstractMatrix)
     density!(model.density, model.rho, R, model.friction_atoms)
     clamp!(model.rho, 0, Inf)
     @. model.radii = 1 / cbrt(4 / 3 * π * model.rho)
-    if any(model.radii .< 1.5) # Debug printout
-        @debug "Structure will fail extrapolation:" density = model.rho[model.friction_atoms] radii = model.radii[model.friction_atoms]
+    if any(model.radii .< 1.5)
+        @warn "LDFA model density exceeds the fitting regime from Gerrits2020 (rₛ<1.5). This usually happens when interatomic distances are unusually short and should be investigated. rₛ=1.5 is clamped here so dynamics can continue without errors." maxlog=1
+        clamp!(model.radii, 1.5, 10) # Ensure Wigner-Seitz radii are within spline bounds. 
     end
     η(r) = r < 10 ? model.splines[1](r) : 0.0
     return Diagonal(diagm(repeat(η.(model.radii[model.friction_atoms]), inner=NQCModels.ndofs(model))))
