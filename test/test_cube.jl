@@ -1,8 +1,10 @@
+ENV["JULIA_CONDAPKG_BACKEND"] = "Null"
+ENV["JULIA_PYTHONCALL_EXE"] = "@PyCall"  # optional
+
 using FrictionProviders
 using Test
 using NQCBase
 using PythonCall
-
 
 py"""
 import sys
@@ -23,16 +25,15 @@ cube_object.read(filename)
     r = c.origin .+ 1e-8
     @test c(r) ≈ cube_object(au_to_ang.(r)...)
 
-    for _=1:10
+    for _ = 1:10
         r = c.origin
-        r += rand() * c.cell.vectors[:,1]
-        r += rand() * c.cell.vectors[:,2]
-        r += rand() * c.cell.vectors[:,3]
+        r += rand() * c.cell.vectors[:, 1]
+        r += rand() * c.cell.vectors[:, 2]
+        r += rand() * c.cell.vectors[:, 3]
 
         @test c(r) ≈ cube_object(au_to_ang.(r)...)
     end
 
-    r = c.origin + c.cell.vectors[:,1] + c.cell.vectors[:,2] + c.cell.vectors[:,3] .- 1e-8
+    r = c.origin + c.cell.vectors[:, 1] + c.cell.vectors[:, 2] + c.cell.vectors[:, 3] .- 1e-8
     @test c(r) ≈ cube_object(au_to_ang.(r)...)
 end
-

@@ -1,24 +1,25 @@
 name = "FrictionProviders"
 uuid = "0e168e98-d76b-4d03-b07e-2b13986b2fd0"
 authors = ["wgst <wch.stark@gmail.com> and contributors"]
-version = "0.1.5"
+version = "0.1.6"
 
 [deps]
 DataInterpolations = "82cc6244-b520-54b8-b5a6-8a565e85f1d0"
 DelimitedFiles = "8bb1440f-4735-579b-a4ab-409b98df4dab"
-JuLIP = "945c410c-986d-556a-acb1-167a618e0462"
-LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 NQCBase = "78c76ebc-5665-4934-b512-82d81b5cbfb7"
 NQCModels = "c814dc9f-a51f-4eaf-877f-82eda4edad48"
 StaticArrays = "90137ffa-7385-5640-81b9-e52037218182"
 Unitful = "1986cc42-f94f-5a68-af5c-568840ba703d"
 UnitfulAtomic = "a7773ee8-282e-5fa2-be4e-bd808c38a91a"
+JuLIP = "945c410c-986d-556a-acb1-167a618e0462"
 
 [compat]
 DataInterpolations = "3, 4"
 JuLIP = "0.13, 0.14"
 NQCBase = "0.1, 0.2"
-NQCModels = "0.8.30, 0.9"
+NQCModels = "0.9"
+PythonCall = "0.9"
+PyCall = "1"
 StaticArrays = "1"
 Unitful = "1"
 UnitfulAtomic = "1"
@@ -27,8 +28,10 @@ julia = "1"
 [extras]
 Pandas = "eadc2687-ae89-51f9-a5d9-86b5a6373a9c"
 PythonCall = "6099a3de-0909-46bc-b1f4-468b9a2dfc0d"
+PyCall = "438e738f-606a-5dbb-bf0a-cddfbfd45ab0"
 SafeTestsets = "1bc83da4-3b8d-516f-aca4-4fe02f6d838f"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
+
 [targets]
-test = ["Pandas", "PythonCall", "SafeTestsets", "Test"]
+test = ["Pandas", "PythonCall", "PyCall", "SafeTestsets", "Test"]
