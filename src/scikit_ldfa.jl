@@ -29,12 +29,12 @@ function density!(model::SciKitLDFA, rho::AbstractVector, R::AbstractMatrix, fri
         for j=1:length(friction_atoms_srtd)
             density_atoms.pop(i=friction_atoms_srtd[j]-1)
         end
-        density_atoms.append(model.atoms_ase[i])
-        r_desc = model.descriptors.create(density_atoms, centers=[length(density_atoms)-1], n_jobs=1) #n_threads)
+        density_atoms.append(model.atoms_ase[i-1])
+        r_desc = model.descriptors.create(density_atoms, centers=PyList([length(density_atoms)-1]), n_jobs=1) #n_threads)
         if model.scaler != nothing
             r_desc = model.scaler.transform(r_desc)
         end
-        rho[i] = austrip(model.ml_model.predict(r_desc)[end] * model.density_unit)
+        rho[i] = austrip(pyconvert(Vector, model.ml_model.predict(r_desc))[end] * model.density_unit)
     end
 end
 

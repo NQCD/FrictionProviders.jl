@@ -1,15 +1,10 @@
-ENV["JULIA_CONDAPKG_BACKEND"] = "Null"
-ENV["JULIA_PYTHONCALL_EXE"] = "@PyCall"  # optional
-
 using Test
 using FrictionProviders
 using PythonCall
-using PyCall: pyimport
 using NQCBase: NQCBase
 using NQCModels: FrictionModels
 using Pandas: read_pickle
 using Unitful: @u_str
-using ASE
 using JuLIP
 using ACE1
 
@@ -27,14 +22,14 @@ ase_atoms = aseio.read("h2cu_start.in")
 atoms, R, cell =  NQCBase.convert_from_ase_atoms(ase_atoms)
 ase_atoms_jl = ase_atoms.copy()
 ase_atoms_jl.pop(-1)
-ase_jl = ASE.ASEAtoms(ase_atoms_jl)
-atoms_julip = JuLIP.Atoms(ase_jl)
+aseio.write("h2cu_singleH.xyz", ase_atoms_jl)
+atoms_julip = ACE1.read_extxyz("h2cu_singleH.xyz")
 
 model_ml = ace_model("ace_dens_model/h2cu_ace.json", atoms_julip)
 density_model = AceLDFA(model_ml; density_unit=u"Å^-3")
 model = LDFAFriction(density_model, atoms; friction_atoms=[55, 56])
 
-@testset "ScikitModel!" begin
+@testset "ACE LDFA" begin
     F = zeros(3*56, 3*56)
     r = @view R[:,1]
     r .= 0

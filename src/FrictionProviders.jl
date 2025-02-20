@@ -8,6 +8,7 @@ using NQCBase: PeriodicCell, apply_cell_boundaries!, au_to_ang, au_to_eV
 using NQCModels: NQCModels, FrictionModels, Model, Subsystem
 using JuLIP: set_positions!
 using LinearAlgebra
+using PythonCall
 
 """
     friction_matrix_indices(model, indices)
