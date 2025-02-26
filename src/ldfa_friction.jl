@@ -13,6 +13,26 @@ struct LDFAFriction{D,T,S} <: NQCModels.FrictionModels.ElectronicFrictionProvide
     ndofs::Int
 end
 
+"""
+    LDFAFriction(density, atoms; friction_atoms=collect(Int, range(atoms)))
+
+FrictionProvider for the Local Density Friction Approximation. 
+    
+    # Arguments
+    
+    ## density
+    This should be an interface to the prediction of the electronic density as a function of atomic positions. 
+    It should support a `density` method. 
+    
+    ## atoms
+    `NQCBase.Atoms` for the structure in question. This determines the correct fitting curve between Wigner-Seitz radii and electronic friction as shown in Gerrits2020. 
+    Usually, this is the same `Atoms` object as you use in your dynamics simulation. 
+
+    ## friction_atoms
+    
+    The atom indices which electronic friction should be applied to. 
+
+"""
 function LDFAFriction(density, atoms; friction_atoms=collect(Int, range(atoms)))
     ldfa_data, _ = readdlm(joinpath(@__DIR__, "ldfa.txt"), ',', header=true)
     r = ldfa_data[:, 1]
@@ -33,6 +53,15 @@ function LDFAFriction(density, atoms; friction_atoms=collect(Int, range(atoms)))
     LDFAFriction(density, rho, radii, splines, friction_atoms, 3)
 end
 
+"""
+    get_friction_matrix(model::LDFAFriction, R::AbstractMatrix)
+
+get_friction_matrix uses the specified density model to predict the friction matrix for `friction_atoms` and return it for just those atoms. 
+Units of friction are mass-weighted, and the atomic unit of friction is: [E_h / ħ / m_e]
+Convert common friction units such as ps^-1 or meV ps Å^-2 using `UnitfulAtomic.austrip`. 
+
+This behaviour is different to NQCModels.friction!, which returns friction for the whole system, not just `friction_atoms`. 
+"""
 function get_friction_matrix(model::LDFAFriction, R::AbstractMatrix)
     density!(model.density, model.rho, R, model.friction_atoms)
     clamp!(model.rho, 0, Inf)
@@ -42,7 +71,8 @@ function get_friction_matrix(model::LDFAFriction, R::AbstractMatrix)
         clamp!(model.radii, 1.5, 10) # Ensure Wigner-Seitz radii are within spline bounds. 
     end
     η(r) = r < 10 ? model.splines[1](r) : 0.0
-    return Diagonal(diagm(repeat(η.(model.radii[model.friction_atoms]), inner=NQCModels.ndofs(model))))
+    eft_diagonal = repeat(η.(model.radii[model.friction_atoms]), inner=NQCModels.ndofs(model)) # Evaluate friction splines for each atom, then repeat the values per atom for all degrees of freedom. 
+    return eft_diagonal |> diagm |> Diagonal # Return the EFT as a diagonal Matrix with the LinearAlgebra type for efficiency. 
 end
 
 export get_friction_matrix

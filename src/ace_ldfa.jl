@@ -9,6 +9,21 @@ struct AceLDFA{L,U}
     density_unit::U
 end
 
+"""
+    AceLDFA(friction_IP; density_unit=u"Å^-3")
+
+ACE.jl electron density friction provider. 
+    
+    # Arguments
+    
+    ## friction_IP
+    This is the JuLIP potential created from the fitted ACE model, which is used to predict the electron density as a function of atomic positions. 
+        
+    ## density_unit
+    
+    The unit in which the ACE model predicts the electron density. By default, this is in Å^-3 and should be converted to atomic units of Bohr^-3. 
+
+"""
 function AceLDFA(friction_IP; density_unit=u"Å^-3")
     AceLDFA(friction_IP, density_unit)
 end
