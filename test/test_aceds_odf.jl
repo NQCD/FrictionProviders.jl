@@ -1,10 +1,6 @@
-ENV["JULIA_CONDAPKG_BACKEND"] = "Null"
-ENV["JULIA_PYTHONCALL_EXE"] = "@PyCall"  # optional
-
 using Test
 using FrictionProviders
 using PythonCall
-using PyCall: pyimport
 using NQCBase: NQCBase
 using NQCModels: FrictionModels
 using Unitful: @u_str
@@ -13,17 +9,15 @@ using ACE
 using ACEds.FrictionModels
 using ACEds.FrictionModels: Gamma
 using JuLIP
-using ASE
 
 aseio = pyimport("ase.io")
 
 ## LOAD INITIAL ATOMS
-atoms_path = "hpt_start.in"
+atoms_path = "hpt_start.xyz"
 model_path = "aceds_model/"
 
 ase_atoms = aseio.read(atoms_path)
-ase_jl = ASE.ASEAtoms(ase_atoms)
-julip_atoms = JuLIP.Atoms(ase_jl)
+julip_atoms = JuLIP.read_extxyz(atoms_path)
 atoms, R, cell =  NQCBase.convert_from_ase_atoms(ase_atoms)
 
 
