@@ -19,7 +19,7 @@ UnitfulAtomic = "a7773ee8-282e-5fa2-be4e-bd808c38a91a"
 [compat]
 DataInterpolations = "3, 4"
 JuLIP = "0.13, 0.14"
-NQCBase = "0.1, 0.2"
+NQCBase = "0.2, 0.3"
 NQCModels = "0.9"
 PythonCall = "0.9"
 StaticArrays = "1"
