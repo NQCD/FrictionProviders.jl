@@ -1,11 +1,10 @@
 module FrictionProviders
 
-using DataInterpolations
 using DelimitedFiles: readdlm
 using UnitfulAtomic: austrip, auconvert
 using Unitful: @u_str, ustrip
 using NQCBase: PeriodicCell, apply_cell_boundaries!, au_to_ang, au_to_eV
-using NQCModels: NQCModels, FrictionModels, Model, Subsystem
+using NQCModels: NQCModels, FrictionModels, Model, Subsystem, ElectronDensityProvider, TensorialFriction
 using JuLIP: set_positions!
 using LinearAlgebra
 using PythonCall
@@ -20,20 +19,20 @@ function friction_matrix_indices(indices, dofs)
     return vcat(broadcast(x -> x .+ dof_range, dofs .* (indices .- 1))...)
 end
 
-include("ldfa_friction.jl")
+# include("ldfa_friction.jl")
 include("cube.jl")
 include("cube_ldfa.jl")
 include("scikit_ldfa.jl")
 include("ace_ldfa.jl")
-include("odf_friction.jl")
+# include("odf_friction.jl")
 include("schnet_odf.jl")
 include("ace_odf.jl")
 
-export LDFAFriction
+# export LDFAFriction
 export AceLDFA
 export CubeLDFA
 export SciKitLDFA
-export ODFriction
+# export ODFriction
 export SchNetODF
 export ACEdsODF
 
