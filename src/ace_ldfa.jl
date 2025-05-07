@@ -3,7 +3,7 @@ This uses a ACE ML models to attach friction coefficients to existing models by 
 provided by Gerrits et al. in PHYSICAL REVIEW B 102, 155130 (2020).
 """
 
-struct AceLDFA{L,U}
+struct AceLDFA{L,U} <: ElectronDensityProvider
     friction_IP::L
     "Units"
     density_unit::U

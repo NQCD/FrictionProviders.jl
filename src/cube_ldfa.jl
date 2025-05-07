@@ -3,7 +3,7 @@ This uses a cube file to attach friction coefficients to existing models by fitt
 provided by Gerrits et al. in PHYSICAL REVIEW B 102, 155130 (2020).
 """
 
-struct CubeLDFA{T}
+struct CubeLDFA{T} <: FrictionModels.ElectronDensityProvider
     "Cube file reader."
     cube::Cube{T}
     "Temporary array for storing the electron density."
