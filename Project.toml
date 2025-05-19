@@ -21,7 +21,7 @@ ACEpotentials={url="https://github.com/ACEsuit/ACEpotentials.jl.git", rev="v0.6.
 
 [compat]
 JuLIP = "0.13, 0.14"
-NQCBase = "0.2, 0.3"
+NQCBase = "0.2, 0.3, 0.4"
 NQCModels = "0.9"
 PythonCall = "0.9"
 StaticArrays = "1"
