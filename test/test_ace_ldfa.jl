@@ -3,16 +3,17 @@ using FrictionProviders
 using PythonCall
 using NQCBase: NQCBase
 using NQCModels: FrictionModels
-using Pandas: read_pickle
+import Random
 using Unitful: @u_str
 using JuLIP
-using ACE1
+using ACEpotentials
 
 function ace_model(model_path, cur_atoms)
-    IP = ACE1.read_dict(load_dict(model_path)["IP"])
+    IP = read_dict(load_dict(model_path)["IP"])
     JuLIP.set_calculator!(cur_atoms, IP)
     
     model = AdiabaticModels.JuLIPModel(cur_atoms)
+    return model
 end
 
 # ACE MODEL
@@ -22,8 +23,10 @@ ase_atoms = aseio.read("h2cu_start.in")
 atoms, R, cell =  NQCBase.convert_from_ase_atoms(ase_atoms)
 ase_atoms_jl = ase_atoms.copy()
 ase_atoms_jl.pop(-1)
-aseio.write("h2cu_singleH.xyz", ase_atoms_jl)
-atoms_julip = ACE1.read_extxyz("h2cu_singleH.xyz")
+fn = Random.randstring(40) * ".xyz"
+aseio.write(fn, ase_atoms_jl)
+atoms_julip = read_extxyz(fn)
+rm(fn)
 
 model_ml = ace_model("ace_dens_model/h2cu_ace.json", atoms_julip)
 density_model = AceLDFA(model_ml; density_unit=u"Å^-3")

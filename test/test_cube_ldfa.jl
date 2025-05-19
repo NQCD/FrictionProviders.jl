@@ -2,7 +2,7 @@ using Test
 using FrictionProviders
 using PythonCall
 using NQCBase: NQCBase
-using NQCModels: FrictionModels
+using NQCModels
 
 aseio = pyimport("ase.io")
 ase_atoms = aseio.read("start.in")

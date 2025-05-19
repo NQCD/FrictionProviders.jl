@@ -2,7 +2,7 @@ using Test
 using FrictionProviders
 using PythonCall
 using NQCBase
-using NQCModels: FrictionModels
+using NQCModels
 using Unitful: @u_str
 
 # SCI-KIT MODEL
