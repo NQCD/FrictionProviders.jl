@@ -50,7 +50,7 @@ get_friction_matrix uses an `ACEdsODF` model to predict the friction matrix for 
 
 This behaviour is different to NQCModels.friction!, which returns friction for the whole system, not just `friction_atoms`. 
 """
-function get_friction_matrix(model::ACEdsODF, R::AbstractMatrix)
+function NQCModels.FrictionModels.get_friction_matrix(model::ACEdsODF, R::AbstractMatrix)
     set_positions!(model.atoms_julip, au_to_ang.(R))
     DoFs = size(R, 1)
     friction=zeros(eltype(R), length(model.friction_atoms)*DoFs, length(model.friction_atoms)*DoFs)

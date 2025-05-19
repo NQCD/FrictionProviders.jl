@@ -3,7 +3,7 @@ This uses a cube file to attach friction coefficients to existing models by fitt
 provided by Gerrits et al. in PHYSICAL REVIEW B 102, 155130 (2020).
 """
 
-struct CubeLDFA{T} <: FrictionModels.ElectronDensityProvider
+struct CubeLDFA{T} <: NQCModels.FrictionModels.ElectronDensityProvider
     "Cube file reader."
     cube::Cube{T}
     "Temporary array for storing the electron density."
@@ -22,7 +22,7 @@ function CubeLDFA(filename, cell; cell_matching_rtol=1e-3)
     CubeLDFA(cube, cell)
 end
 
-function density!(model::CubeLDFA, rho::AbstractVector, R::AbstractMatrix, friction_atoms::AbstractVector)
+function NQCModels.FrictionModels.density!(model::CubeLDFA, rho::AbstractVector, R::AbstractMatrix, friction_atoms::AbstractVector)
     for i in friction_atoms
         r = R[:,i]
         apply_cell_boundaries!(model.cube.cell, r)

@@ -1,13 +1,13 @@
 module FrictionProviders
 
+using PythonCall
 using DelimitedFiles: readdlm
 using UnitfulAtomic: austrip, auconvert
 using Unitful: @u_str, ustrip
 using NQCBase: PeriodicCell, apply_cell_boundaries!, au_to_ang, au_to_eV
-using NQCModels: NQCModels, FrictionModels, Model, Subsystem, ElectronDensityProvider, TensorialFriction
+using NQCModels
 using JuLIP: set_positions!
 using LinearAlgebra
-using PythonCall
 
 """
     friction_matrix_indices(model, indices)

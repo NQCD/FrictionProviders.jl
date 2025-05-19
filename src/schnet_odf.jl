@@ -17,7 +17,7 @@ function SchNetODF(calculator, atoms_ase; friction_unit=u"ps^-1", friction_atoms
     SchNetODF(calculator, atoms_ase, friction_unit, friction_atoms, size(atoms_ase.positions, 2))
 end
 
-function get_friction_matrix(model::SchNetODF, positions::AbstractMatrix)
+function NQCModels.FrictionModels.get_friction_matrix(model::SchNetODF, positions::AbstractMatrix)
     model.atoms_ase.set_positions(au_to_ang.(positions'))
     model.calculator.calculate(model.atoms_ase)
     friction .= model.calculator.get_friction_tensor()
