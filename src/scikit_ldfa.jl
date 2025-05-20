@@ -3,7 +3,7 @@ This uses a SciKit ML models to attach friction coefficients to existing models 
 provided by Gerrits et al. in PHYSICAL REVIEW B 102, 155130 (2020).
 """
 
-struct SciKitLDFA{D,L,A,U,S}
+struct SciKitLDFA{D,L,A,U,S} <: FrictionModels.ElectronDensityProvider
     "Descriptors used for scikit models"
     descriptors::D
     "Sci-Kit ML model"
@@ -21,7 +21,7 @@ function SciKitLDFA(descriptors, ml_model, atoms_ase; density_unit=u"Å^-3", sca
 end
 
 
-function density!(model::SciKitLDFA, rho::AbstractVector, R::AbstractMatrix, friction_atoms::AbstractVector)
+function NQCModels.FrictionModels.density!(model::SciKitLDFA, rho::AbstractVector, R::AbstractMatrix, friction_atoms::AbstractVector)
     for i in friction_atoms
         model.atoms_ase.set_positions(au_to_ang.(R'))
         density_atoms = model.atoms_ase.copy()

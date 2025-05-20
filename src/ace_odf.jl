@@ -1,12 +1,16 @@
-struct ACEdsODF{M,G,A,U}
-    "ACE/friction_tensor calculator"
-    model::M
+import JuLIP
+
+struct ACEdsODF{M,U} <: FrictionModels.TensorialFriction
+    "ACEfriction model object"
+    predictor::M
     "Gamma ACEds function"
-    gamma::G
+    gamma::Function
     "JuLIP atoms object"
-    atoms_julip::A
+    atoms_julip::JuLIP.Atoms
     "Units"
     friction_unit::U
+    friction_atoms::Union{Vector{Int}, Colon}
+    ndofs::Int
 end
 
 """
@@ -35,8 +39,8 @@ If you are using isotopes, their atomic masses need to be correctly set within t
 The unit in which the ACEfriction model predicts the friction tensor. By default, this is a relaxation rate tensor in inverse ps. 
  
 """
-function ACEdsODF(model, gamma, atoms_julip; friction_unit=u"ps^-1")
-    ACEdsODF(model, gamma, atoms_julip, friction_unit)
+function ACEdsODF(model, gamma, atoms_julip; friction_unit=u"ps^-1", friction_atoms = :)
+    ACEdsODF(model, gamma, atoms_julip, friction_unit, friction_atoms, size(atoms_julip.X[1], 1))
 end
 
 """
@@ -46,12 +50,12 @@ get_friction_matrix uses an `ACEdsODF` model to predict the friction matrix for 
 
 This behaviour is different to NQCModels.friction!, which returns friction for the whole system, not just `friction_atoms`. 
 """
-function get_friction_matrix(model::ACEdsODF, R::AbstractMatrix, friction_atoms::AbstractVector, cutoff::Float64)
+function NQCModels.FrictionModels.get_friction_matrix(model::ACEdsODF, R::AbstractMatrix)
     set_positions!(model.atoms_julip, au_to_ang.(R))
     DoFs = size(R, 1)
-    friction=zeros(eltype(R), length(friction_atoms)*DoFs, length(friction_atoms)*DoFs)
-    friction .= reinterpret(Matrix,Matrix(model.gamma(model.model, model.atoms_julip)[friction_atoms, friction_atoms]))
-    sqrtmass = sqrt.(model.atoms_julip.M[friction_atoms])
+    friction=zeros(eltype(R), length(model.friction_atoms)*DoFs, length(model.friction_atoms)*DoFs)
+    friction .= reinterpret(Matrix,Matrix(model.gamma(model.predictor, model.atoms_julip)[model.friction_atoms, model.friction_atoms]))
+    sqrtmass = sqrt.(model.atoms_julip.M[model.friction_atoms])
     mass_weights = repeat(sqrtmass * sqrtmass', inner=(DoFs,DoFs))
     @. friction = austrip(friction * model.friction_unit)
     @. friction *= mass_weights
