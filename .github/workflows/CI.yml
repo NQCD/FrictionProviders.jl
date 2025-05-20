@@ -17,9 +17,11 @@ jobs:
 
       - name: Add NQCRegistry
         run: julia -e 'using Pkg; Pkg.Registry.add(RegistrySpec(url="https://github.com/NQCD/NQCRegistry"))'
+      - name: Add JuliaMolSim registry
+        run: julia -e 'using Pkg; Pkg.Registry.add(RegistrySpec(url="https://github.com/JuliaMolSim/MolSim"))'
 
       - name: Install python dependencies
-        run: pip3 install ase pandas dscribe
+        run: pip3 install ase pandas dscribe==2.0.0
 
       - uses: julia-actions/julia-buildpkg@v1
       - uses: julia-actions/julia-runtest@v1

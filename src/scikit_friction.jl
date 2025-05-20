@@ -3,7 +3,7 @@ This uses a SciKit ML models to attach friction coefficients to existing models,
 provides the friction coefficients directly. (unlike models that provide the density)
 """
 
-struct SciKitFriction{D,L,A,S,U,E}
+struct SciKitFriction{D,L,A,S,U,E} <: NQCModels.FrictionModels.TensorialFriction
     "Descriptors used for scikit models"
     descriptors::D
     "Sci-Kit ML model"
@@ -16,10 +16,12 @@ struct SciKitFriction{D,L,A,S,U,E}
     friction_unit::U
     "Indices of atoms for descriptor"
     descriptor_atoms::E
+    friction_atoms::Vector{Int}
+    ndofs::Int
 end
 
-function SciKitFriction(descriptors, ml_model, atoms, scaler; friction_unit=u"ps^-1", descriptor_atoms=[1])
-    SciKitFriction(descriptors, ml_model, atoms, scaler, friction_unit, descriptor_atoms)
+function SciKitFriction(descriptors, ml_model, atoms, scaler; friction_unit=u"ps^-1", descriptor_atoms=[1], friction_atoms=:)
+    SciKitFriction(descriptors, ml_model, atoms, scaler, friction_unit, descriptor_atoms, friction_atoms, 3)
 end
 
 
@@ -34,10 +36,12 @@ end
 # end
 function F_PearsonVII(x, p_H, p_x0, p_omega, p_sigma)
     f =  p_H / ((1 + ((2 * (x - p_x0) * sqrt(2^ (1 / p_omega) - 1)) /p_sigma)^ 2)^p_omega)
+    return f
 end
 
 function monoExp(x, m, t, b, c)
     f = m * exp(-t * x + c) + b
+    return f
 end
 
 function fitted_function(z)
@@ -79,17 +83,15 @@ function find_min_xy_dist(atoms,idx1,idx2)
     minimum(distances)
 end
 
-function skfriction!(model::SciKitFriction,R::AbstractMatrix, f::AbstractMatrix, friction_atoms::AbstractVector)
+function NQCModels.FrictionModels.get_friction_matrix(model::SciKitFriction, R::AbstractMatrix)
 
     #apply_cell_boundaries!(model.atoms.cell, R)
     set_coordinates!(model, R)
-
-
+    f = similar(R, model.ndofs*model.friction_atoms, model.ndofs*model.friction_atoms) # Generate friction matrix
+    
     r_desc = model.descriptors.create(model.atoms, positions=model.descriptor_atoms.-1, n_jobs=-1) #n_threads)
     r_desc = model.scaler.transform(r_desc)
     m_out = model.ml_model.predict(r_desc) 
-
-
 
     # ODF-S1 model3:  This model shifts the z coordinate of the spin peak.
     # It gave very poor results during a trajectory, so we no longer use it.
