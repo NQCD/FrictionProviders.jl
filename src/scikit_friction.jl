@@ -34,43 +34,43 @@ end
 #     lorentzian =   (4/π)  * ((Gamma) /  ((z - z0)^2 +(Gamma)^2 ))
 #     lorentzian
 # end
-function F_PearsonVII(x, p_H, p_x0, p_omega, p_sigma)
-    f =  p_H / ((1 + ((2 * (x - p_x0) * sqrt(2^ (1 / p_omega) - 1)) /p_sigma)^ 2)^p_omega)
-    return f
-end
+# function F_PearsonVII(x, p_H, p_x0, p_omega, p_sigma)
+#     f =  p_H / ((1 + ((2 * (x - p_x0) * sqrt(2^ (1 / p_omega) - 1)) /p_sigma)^ 2)^p_omega)
+#     return f
+# end
 
-function monoExp(x, m, t, b, c)
-    f = m * exp(-t * x + c) + b
-    return f
-end
+# function monoExp(x, m, t, b, c)
+#     f = m * exp(-t * x + c) + b
+#     return f
+# end
 
-function fitted_function(z)
+# function fitted_function(z)
 
-    popt1 = [1.00049208,13.74298538,  2.81859272,  0.01748954]
-    popt2 = [ 1.05460886, 13.7397012,   0.64277216,  0.0451869 ]
-    popt3 = [1.31754445e+01, 6.08067956e+00, 0., 7.89657321e+01]
+#     popt1 = [1.00049208,13.74298538,  2.81859272,  0.01748954]
+#     popt2 = [ 1.05460886, 13.7397012,   0.64277216,  0.0451869 ]
+#     popt3 = [1.31754445e+01, 6.08067956e+00, 0., 7.89657321e+01]
 
-    zz = 0
+#     zz = 0
 
-    if (z>=13.71) && (z<=13.74)
+#     if (z>=13.71) && (z<=13.74)
 
-        zz = F_PearsonVII(z,popt1...)
+#         zz = F_PearsonVII(z,popt1...)
 
-    elseif (z>13.74) && (z<=14.0)
+#     elseif (z>13.74) && (z<=14.0)
 
-        zz =  F_PearsonVII(z,popt2...)
+#         zz =  F_PearsonVII(z,popt2...)
 
-    else #(z>14.0) 
-        # && (z<=20)
+#     else #(z>14.0) 
+#         # && (z<=20)
 
-        zz = monoExp(z,popt3...)
+#         zz = monoExp(z,popt3...)
 
-    # else
-    #     zz=0
-    end
+#     # else
+#     #     zz=0
+#     end
 
-    return zz * 156.764979 
-end
+#     return zz * 156.764979 
+# end
 
 
 function find_min_xy_dist(atoms,idx1,idx2)
@@ -116,9 +116,9 @@ function NQCModels.FrictionModels.get_friction_matrix(model::SciKitFriction, R::
 
     # ODF-S1 model2
     # This model has the spin peak at a fixed z coordinate.
-    if (model.atoms.positions[1,3])>=13.71
-        m_out[3] = fitted_function((model.atoms.positions[1,3]))
-    end
+    # if (model.atoms.positions[1,3])>=13.71
+    #     m_out[3] = fitted_function((model.atoms.positions[1,3]))
+    # end
 
     m_out = austrip.(m_out.* model.friction_unit)
 
