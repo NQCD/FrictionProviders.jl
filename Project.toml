@@ -1,7 +1,7 @@
 name = "FrictionProviders"
 uuid = "0e168e98-d76b-4d03-b07e-2b13986b2fd0"
 authors = ["wgst <wch.stark@gmail.com> and contributors"]
-version = "0.1.7"
+version = "1.0.0"
 
 [deps]
 CondaPkg = "992eb4ea-22a4-4c89-a5bb-47a3300528ab"
@@ -16,13 +16,12 @@ Unitful = "1986cc42-f94f-5a68-af5c-568840ba703d"
 UnitfulAtomic = "a7773ee8-282e-5fa2-be4e-bd808c38a91a"
 
 [sources]
-NQCModels = {rev = "remove-python", url = "../NQCModels.jl"}
 ACEpotentials={url="https://github.com/ACEsuit/ACEpotentials.jl.git", rev="v0.6.5"} # Or install ACEsuit/ACEregistry
 
 [compat]
 JuLIP = "0.13, 0.14"
-NQCBase = "0.2, 0.3, 0.4"
-NQCModels = "0.9"
+NQCBase = "0.2, 0.3, 0.4, 0.5"
+NQCModels = "0.10"
 PythonCall = "0.9"
 StaticArrays = "1"
 Unitful = "1"
