@@ -1,7 +1,7 @@
 name = "FrictionProviders"
 uuid = "0e168e98-d76b-4d03-b07e-2b13986b2fd0"
 authors = ["wgst <wch.stark@gmail.com> and contributors"]
-version = "1.0.0"
+version = "1.0.1"
 
 [deps]
 CondaPkg = "992eb4ea-22a4-4c89-a5bb-47a3300528ab"
@@ -20,8 +20,8 @@ ACEpotentials={url="https://github.com/ACEsuit/ACEpotentials.jl.git", rev="v0.6.
 
 [compat]
 JuLIP = "0.13, 0.14"
-NQCBase = "0.2, 0.3, 0.4, 0.5"
-NQCModels = "0.10"
+NQCBase = "0.5, 1"
+NQCModels = "0.10, 1"
 PythonCall = "0.9"
 StaticArrays = "1"
 Unitful = "1"
