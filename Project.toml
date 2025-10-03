@@ -1,7 +1,7 @@
 name = "FrictionProviders"
 uuid = "0e168e98-d76b-4d03-b07e-2b13986b2fd0"
 authors = ["wgst <wch.stark@gmail.com> and contributors"]
-version = "1.0.1"
+version = "1.0.2"
 
 [deps]
 CondaPkg = "992eb4ea-22a4-4c89-a5bb-47a3300528ab"
@@ -16,23 +16,28 @@ Unitful = "1986cc42-f94f-5a68-af5c-568840ba703d"
 UnitfulAtomic = "a7773ee8-282e-5fa2-be4e-bd808c38a91a"
 
 [sources]
-ACEpotentials={url="https://github.com/ACEsuit/ACEpotentials.jl.git", rev="v0.6.5"} # Or install ACEsuit/ACEregistry
+ACEpotentials = {rev = "v0.6.5", url = "https://github.com/ACEsuit/ACEpotentials.jl.git"}
 
 [compat]
-JuLIP = "0.13, 0.14"
-NQCBase = "0.5, 1"
-NQCModels = "0.10, 1"
+ACEpotentials = "0.6, 0.8"
+CondaPkg = "0.2"
+JuLIP = "0.13, 0.14, 0.15, 0.16"
+NQCBase = "1"
+NQCDInterfASE = "1"
+NQCModels = "1"
 PythonCall = "0.9"
+SafeTestsets = "0.1"
 StaticArrays = "1"
 Unitful = "1"
 UnitfulAtomic = "1"
 julia = "1"
 
 [extras]
+ACEpotentials = "3b96b61c-0fcc-4693-95ed-1ef9f35fcc53"
+NQCDInterfASE = "4606675f-2246-4a0b-99d5-75b910de637b"
 Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
-ACEpotentials = "3b96b61c-0fcc-4693-95ed-1ef9f35fcc53" # v0.6.5
 SafeTestsets = "1bc83da4-3b8d-516f-aca4-4fe02f6d838f"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [targets]
-test = ["SafeTestsets", "Test", "Random", "ACEpotentials"]
+test = ["SafeTestsets", "Test", "Random", "ACEpotentials", "NQCDInterfASE"]
