@@ -23,10 +23,6 @@ ACE.jl electron density friction provider.
     The unit in which the ACE model predicts the electron density. By default, this is in Å^-3 and should be converted to atomic units of Bohr^-3. 
 
 """
-function AceLDFA(friction_IP; density_unit=u"Å^-3")
-    AceLDFA(friction_IP, density_unit)
-end
-
 
 function NQCModels.FrictionModels.density!(model::AceLDFA, rho::AbstractVector, R::AbstractMatrix, friction_atoms::AbstractVector{Int})
     # Needs a structure with only one "friction_atom" atom type for evaluation. 
