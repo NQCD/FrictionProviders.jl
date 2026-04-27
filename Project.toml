@@ -22,7 +22,7 @@ JuLIP = {url = "https://github.com/JuliaMolSim/JuLIP.jl.git"}
 [compat]
 # ACEpotentials = "0.6, 0.8"
 CondaPkg = "0.2"
-JuLIP = "0.1 - 1.0"
+JuLIP = "0.16"
 NQCBase = "1"
 NQCDInterfASE = "1"
 NQCModels = "1"
@@ -42,9 +42,9 @@ Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [targets]
 test = [
-    "SafeTestsets", 
-    "Test", 
-    "Random", 
-    # "ACEpotentials", 
+    "SafeTestsets",
+    "Test",
+    "Random",
+    # "ACEpotentials",
     "NQCDInterfASE",
     ]
