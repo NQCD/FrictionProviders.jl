@@ -16,8 +16,8 @@ Unitful = "1986cc42-f94f-5a68-af5c-568840ba703d"
 UnitfulAtomic = "a7773ee8-282e-5fa2-be4e-bd808c38a91a"
 
 [sources]
-JuLIP = {url = "https://github.com/JuliaMolSim/JuLIP.jl.git"}
-# ACEpotentials = {rev = "v0.6.5", url = "https://github.com/ACEsuit/ACEpotentials.jl.git"}
+# JuLIP - Picking v0.16 released in the ACEregistry: https://github.com/ACEsuit/ACEregistry/blob/26aad5115752fd8bbcbe76f792cee3f64e11e4ee/J/JuLIP/Versions.toml#L158
+JuLIP = {rev = "189055a90980e3bf02ab7e40e1f6eb71522db586", url = "https://github.com/JuliaMolSim/JuLIP.jl.git"}
 
 [compat]
 # ACEpotentials = "0.6, 0.8"
