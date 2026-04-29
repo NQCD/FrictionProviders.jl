@@ -1,7 +1,7 @@
 name = "FrictionProviders"
 uuid = "0e168e98-d76b-4d03-b07e-2b13986b2fd0"
 authors = ["wgst <wch.stark@gmail.com> and contributors"]
-version = "1.0.2"
+version = "1.0.3"
 
 [deps]
 CondaPkg = "992eb4ea-22a4-4c89-a5bb-47a3300528ab"
@@ -15,13 +15,14 @@ StaticArrays = "90137ffa-7385-5640-81b9-e52037218182"
 Unitful = "1986cc42-f94f-5a68-af5c-568840ba703d"
 UnitfulAtomic = "a7773ee8-282e-5fa2-be4e-bd808c38a91a"
 
-# [sources]
-# ACEpotentials = {rev = "v0.6.5", url = "https://github.com/ACEsuit/ACEpotentials.jl.git"}
+[sources]
+# JuLIP - Picking v0.16 released in the ACEregistry: https://github.com/ACEsuit/ACEregistry/blob/26aad5115752fd8bbcbe76f792cee3f64e11e4ee/J/JuLIP/Versions.toml#L158
+JuLIP = {rev = "189055a90980e3bf02ab7e40e1f6eb71522db586", url = "https://github.com/JuliaMolSim/JuLIP.jl.git"}
 
 [compat]
 # ACEpotentials = "0.6, 0.8"
 CondaPkg = "0.2"
-JuLIP = "0.13, 0.14, 0.15, 0.16"
+JuLIP = "0.16"
 NQCBase = "1"
 NQCDInterfASE = "1"
 NQCModels = "1"
@@ -41,9 +42,9 @@ Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [targets]
 test = [
-    "SafeTestsets", 
-    "Test", 
-    "Random", 
-    # "ACEpotentials", 
+    "SafeTestsets",
+    "Test",
+    "Random",
+    # "ACEpotentials",
     "NQCDInterfASE",
     ]
